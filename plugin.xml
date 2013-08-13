@@ -17,6 +17,8 @@
 		<nom>recuperer_fond</nom>
 		<inclure>cicas_pipeline.php</inclure>
 	</pipeline>
+
+	<!--
 	<pipeline>
 		<nom>pre_edition</nom>
 		<inclure>cicas_pipeline.php</inclure>
@@ -33,6 +35,8 @@
 		<icone>images/cicas.png</icone>
 		<url>cicas_config</url>
 	</bouton>
+	-->
+
 	<necessite id="SPIP" version='[2.0.9;]' />
 
 </plugin>
