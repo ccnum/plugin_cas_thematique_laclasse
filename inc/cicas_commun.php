@@ -298,7 +298,56 @@ function cicas_verifier_identifiant($ci_cas_userid) {
  *
  * @param : aucun
  * @return : false si parametrage par fichier, sinon true
+ * Surcharge Erasme cicas_lire_meta() et backup cicas_lire_meta0()
  */
+function cicas_lire_meta0() {
+	
+	$return = true;
+	
+	if (!isset($GLOBALS['ciconfig']['cicas'])) {
+
+		$GLOBALS['ciconfig']['cicas'] = '';
+		$GLOBALS['ciconfig']['cicasuid'] = '';
+		$GLOBALS['ciconfig']['cicasurldefaut'] = '';
+		$GLOBALS['ciconfig']['cicasrepertoire'] = '';
+		$GLOBALS['ciconfig']['cicasport'] = '';
+		$GLOBALS['ciconfig']['cicasurls'] = array();
+		
+		$f = _DIR_RACINE . _NOM_PERMANENTS_INACCESSIBLES . '_config_cas.php';
+	
+		if (@file_exists($f)) {
+			// parametrage par fichier
+			include_once($f);
+			
+			// compatibilite ascendante
+			if ($GLOBALS['ciconfig']['cicasport']=='')
+				$GLOBALS['ciconfig']['cicasport'] = '443';
+			
+			$return = false;
+				
+		} else {
+			// configuration du plugin
+			$tableau = array();
+			$tableau = @unserialize($GLOBALS['meta']['cicas']);
+	
+			$GLOBALS['ciconfig']['cicas'] = $tableau['cicas'];
+			$GLOBALS['ciconfig']['cicasuid'] = $tableau['cicasuid'];
+			$GLOBALS['ciconfig']['cicasurldefaut'] = $tableau['cicasurldefaut'];
+			$GLOBALS['ciconfig']['cicasrepertoire'] = $tableau['cicasrepertoire'];
+			$GLOBALS['ciconfig']['cicasport'] = $tableau['cicasport'];
+		}
+	
+		// valeur par défaut
+		if (!isset($GLOBALS['ciconfig']['cicas']))
+			$GLOBALS['ciconfig']['cicas'] = 'non';
+		elseif ($GLOBALS['ciconfig']['cicas']=='')
+			$GLOBALS['ciconfig']['cicas'] = 'non';
+	
+	}
+		
+    return $return;
+}
+
 function cicas_lire_meta() {
 	
 	include_spip('inc/session');
@@ -332,7 +381,6 @@ function cicas_lire_meta() {
       'cicasstatutcrea' => '6forum'
      )
     );
-	//echo $ent;
 	$GLOBALS['ciconfig']['ent'] = $ent;
 	$GLOBALS['ciconfig']['cicas'] = $tableau[$ent]['cicas'];
 	$GLOBALS['ciconfig']['cicasuid'] = $tableau[$ent]['cicasuid'];
