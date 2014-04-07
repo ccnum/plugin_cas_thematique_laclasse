@@ -361,7 +361,7 @@ function cicas_lire_meta() {
 
 	$tableau = array(
 	'laclasse' => array(
-		'cicas' => 'hybride',		
+	  'cicas' => 'hybride',
       'cas_version' => '2.0',
       'include_path' => '/var/www/html/CAS-1.2.0/CAS.php',
       'cicasurldefaut' => 'www.laclasse.com',
@@ -371,7 +371,7 @@ function cicas_lire_meta() {
       'cicasstatutcrea' => '6forum'
      ),
     'cybercolleges42' => array(
-    	'cicas' => 'hybride',
+	  'cicas' => 'hybride',
       'cas_version' => '2.0',
       'include_path' => '/var/www/html/CAS-1.2.0/CAS.php',
       'cicasurldefaut' => 'cas.cybercolleges42.fr',
