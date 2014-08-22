@@ -1,0 +1,43 @@
+[<p class='formulaire_ok'>(#ENV*{message_ok})</p>]
+[<p class='formulaire_erreur'>(#ENV*{message_erreur})</p>]
+<form action='#ENV{action}' method='post'>
+    #ACTION_FORMULAIRE{#ENV{action}}
+
+    <input type='hidden' name='changer_config' value='oui' />
+    <br />
+    <fieldset>      
+        <legend><:cicas:eq_titre_serveur_cas:></legend>
+        [(#SET{ci_tableau_uid,#ARRAY{
+            'email','email',
+            login,'login'}
+        })]
+
+        [(#REM) cicasurldefaut]
+	    <label for='cicasurldefaut'><:cicas:eq_texte_url:></label><br />
+        <input type='text' name='cicasurldefaut' id='cicasurldefaut' value="#ENV{cicasurldefaut}" size='40' class='formo'[ (#ENV{ciedit}|non)disabled='disabled'] /><br />
+        [<span class='erreur'>(#ENV**{erreurs}|table_valeur{cicasurldefaut})</span>]<br />
+
+        [(#REM) cicasrepertoire]
+        <label for='cicasrepertoire'><:cicas:eq_texte_repertoire:></label><br />
+        <input type='text' name='cicasrepertoire' id='cicasrepertoire' value="#ENV{cicasrepertoire}" size='40' class='formo'[ (#ENV{ciedit}|non)disabled='disabled'] /><br />
+        [<span class='erreur'>(#ENV**{erreurs}|table_valeur{cicasrepertoire})</span>]<br />
+
+        [(#REM) cicasport]
+        <label for='cicasport'><:cicas:eq_texte_port:></label><br />
+        <input type='text' name='cicasport' id='cicasport' value="#ENV{cicasport}" size='40' class='formo'[ (#ENV{ciedit}|non)disabled='disabled'] /><br />
+        [<span class='erreur'>(#ENV**{erreurs}|table_valeur{cicasport})</span>]<br />
+
+        [(#REM) cicasuid] 
+        <label for='cicasuid'><:cicas:eq_texte_uid:></label><br />
+        <B_uid>
+            <select name='cicasuid' class='formo'[ (#ENV{ciedit}|non)disabled='disabled'] >
+            <option></option>
+            <BOUCLE_uid(DATA){source table, #GET{ci_tableau_uid}}>        
+                <option value='#CLE'[ (#CLE|=={#ENV{cicasuid}}|oui)selected='selected']>#VALEUR</option>
+            </BOUCLE_uid>
+            </select><br />
+        </B_uid>
+        [<span class='erreur'>(#ENV**{erreurs}|table_valeur{cicasuid})</span>]<br />
+    </fieldset>
+    <input type='submit' name='ok' value='ok' />
+</form>
