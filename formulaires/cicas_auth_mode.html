@@ -1,0 +1,25 @@
+[<p class='formulaire_ok'>(#ENV*{message_ok})</p>]
+[<p class='formulaire_erreur'>(#ENV*{message_erreur})</p>]
+<form action='#ENV{action}' method='post'>
+    #ACTION_FORMULAIRE{#ENV{action}}
+
+    <input type='hidden' name='changer_config' value='oui' />
+    <br /><:cicas:eq_avertissement:><br />
+    <br />
+    <fieldset>      
+        <legend><:cicas:eq_titre_mode_auth:></legend>
+        [(#SET{mode,#ARRAY{
+            'oui',<:cicas:eq_texte_auth_cas:>,
+            'hybride',<:cicas:eq_texte_auth_hybride:>,
+            'non',<:cicas:eq_texte_auth_spip:>}
+        })]
+
+        <BOUCLE_mode(DATA){source table, #GET{mode}}>
+        
+            <input name="cicas" id="cicas_auth_mode_#CLE" value="#CLE" type="radio"[ (#CLE|=={#ENV{auth_mode}}|oui)checked="checked"]/>
+            <label for="cicas_auth_mode_#CLE">#VALEUR</label>
+        </BOUCLE_mode>
+        [<span class='erreur'>(#ENV**{erreurs}|table_valeur{auth_mode})</span>]
+    </fieldset>
+    <input type='submit' name='ok' value='ok' />
+</form>
