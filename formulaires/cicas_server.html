@@ -1,19 +1,17 @@
-[<p class='formulaire_ok'>(#ENV*{message_ok})</p>]
-[<p class='formulaire_erreur'>(#ENV*{message_erreur})</p>]
-<form action='#ENV{action}' method='post'>
-    #ACTION_FORMULAIRE{#ENV{action}}
+[(#BOITE_OUVRIR{<:cicas:eq_titre_serveur_cas:>,'important'})]
 
-    <input type='hidden' name='changer_config' value='oui' />
-    <br />
-    <fieldset>      
-        <legend><:cicas:eq_titre_serveur_cas:></legend>
+    [<p class='formulaire_ok'>(#ENV*{message_ok})</p>]
+    [<p class='formulaire_erreur'>(#ENV*{message_erreur})</p>]
+    <form action='#ENV{action}' method='post'>
+        #ACTION_FORMULAIRE{#ENV{action}}
+    
         [(#SET{ci_tableau_uid,#ARRAY{
             'email','email',
             login,'login'}
         })]
 
         [(#REM) cicasurldefaut]
-	    <label for='cicasurldefaut'><:cicas:eq_texte_url:></label><br />
+        <label for='cicasurldefaut'><:cicas:eq_texte_url:></label><br />
         <input type='text' name='cicasurldefaut' id='cicasurldefaut' value="#ENV{cicasurldefaut}" size='40' class='formo'[ (#ENV{ciedit}|non)disabled='disabled'] /><br />
         [<span class='erreur'>(#ENV**{erreurs}|table_valeur{cicasurldefaut})</span>]<br />
 
@@ -37,7 +35,8 @@
             </BOUCLE_uid>
             </select><br />
         </B_uid>
-        [<span class='erreur'>(#ENV**{erreurs}|table_valeur{cicasuid})</span>]<br />
-    </fieldset>
-    <input type='submit' name='ok' value='ok' />
-</form>
+        [<span class='erreur'>(#ENV**{erreurs}|table_valeur{cicasuid})</span>]
+
+        <br /><input type='submit' name='ok' value='Valider' />
+    </form>
+#BOITE_FERMER
