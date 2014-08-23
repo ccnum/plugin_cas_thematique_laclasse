@@ -1,0 +1,26 @@
+<!--#hierarchie-->
+<a href="#URL_ECRIRE"><:ecrire:info_racine_site:></a>
+>
+<a href="#SELF"><:cicas:eq_titre:></a>
+<!--/#hierarchie-->
+    
+    [(#BOITE_OUVRIR{<:cicas:eq_titre:>,'simple','section'})]
+     
+        <div class='ajax'>
+            [(#BOITE_OUVRIR{'','important'})]
+                #FORMULAIRE_CICAS_AUTH_MODE
+            #BOITE_FERMER
+        </div>
+        <div class='ajax'>
+            [(#BOITE_OUVRIR{'','important'})]
+                #FORMULAIRE_CICAS_SERVER
+            #BOITE_FERMER
+        </div>
+     
+    #BOITE_FERMER
+     
+<!--#navigation-->
+<!--/#navigation-->
+ 
+<!--#extra-->
+<!--/#extra-->
