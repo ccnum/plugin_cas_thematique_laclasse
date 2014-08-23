@@ -11,6 +11,7 @@
             $valeurs['cicasport'] = $GLOBALS['ciconfig']['cicasport'];
             $valeurs['cicasuid'] = $GLOBALS['ciconfig']['cicasuid'];
             $valeurs['ciedit'] = $ciedit;
+            $valeurs['ci_tableau_uid'] = lire_config('cicas/cuid_list',array('login','email'));
         }        
         return $valeurs;
     }
@@ -19,7 +20,7 @@
         $erreurs = array();
 
         $cicasuid = _request('cicasuid');
-        if (!in_array($cicasuid,array('email','login')))
+        if (!in_array($cicasuid,lire_config('cicas/cuid_list',array('login','email'))))
             $erreurs['cicasuid'] = "uid CAS invalide";
 
         return $erreurs;

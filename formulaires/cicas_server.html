@@ -4,11 +4,6 @@
     [<p class='formulaire_erreur'>(#ENV*{message_erreur})</p>]
     <form action='#ENV{action}' method='post'>
         #ACTION_FORMULAIRE{#ENV{action}}
-    
-        [(#SET{ci_tableau_uid,#ARRAY{
-            'email','email',
-            login,'login'}
-        })]
 
         [(#REM) cicasurldefaut]
         <label for='cicasurldefaut'><:cicas:eq_texte_url:></label><br />
@@ -30,8 +25,8 @@
         <B_uid>
             <select name='cicasuid' class='formo'[ (#ENV{ciedit}|non)disabled='disabled'] >
             <option></option>
-            <BOUCLE_uid(DATA){source table, #GET{ci_tableau_uid}}>        
-                <option value='#CLE'[ (#CLE|=={#ENV{cicasuid}}|oui)selected='selected']>#VALEUR</option>
+            <BOUCLE_uid(DATA){source table, #ENV{ci_tableau_uid}}>
+                <option value='#VALEUR'[ (#VALEUR|=={#ENV{cicasuid}}|oui)selected='selected']>#VALEUR</option>
             </BOUCLE_uid>
             </select><br />
         </B_uid>
