@@ -1,8 +1,9 @@
 <?php
 
-    function formulaires_cicas_server_charger() {
-        include_spip('inc/cicas_commun');
+    include_spip('inc/config');
+    include_spip('inc/cicas_commun');
 
+    function formulaires_cicas_server_charger() {
         $valeurs = array();
 
         if ($ciedit = cicas_lire_meta()) {
@@ -28,7 +29,6 @@
 
     function formulaires_cicas_server_traiter() {
         include_spip('inc/meta');
-        include_spip('inc/config');
         
         $res = array();
         $cicas_config = lire_config("cicas");
