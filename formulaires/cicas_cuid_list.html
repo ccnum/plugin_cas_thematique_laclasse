@@ -1,0 +1,14 @@
+[(#BOITE_OUVRIR{<:cicas:titre_cuid_list:>,'important'})]
+
+    [<p class='formulaire_ok'>(#ENV*{message_ok})</p>]
+    [<p class='formulaire_erreur'>(#ENV*{message_erreur})</p>]
+    <form action='#ENV{action}' method='post'>
+        #ACTION_FORMULAIRE{#ENV{action}}
+
+        <textarea name="cuid_list">#ENV{cuid_list}</textarea>
+        [<span class='erreur'>(#ENV**{erreurs}|table_valeur{cuid_list})</span>]
+
+        <br /><input type='submit' name='ok' value='Valider' />
+    </form>
+
+#BOITE_FERMER
