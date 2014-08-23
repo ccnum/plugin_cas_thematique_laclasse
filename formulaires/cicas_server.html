@@ -32,6 +32,20 @@
         </B_uid>
         [<span class='erreur'>(#ENV**{erreurs}|table_valeur{cicasuid})</span>]
 
+        [(#REM) cicasstatutcrea] 
+        <label for='cicasstatutcrea'><:cicas:eq_texte_cicasstatutcrea:></label><br />
+        <B_statutcrea>
+            <select name='cicasstatutcrea' class='formo'[ (#ENV{ciedit}|non)disabled='disabled'] >
+            <option></option>
+            <BOUCLE_statutcrea(DATA){source table, #ENV{tableau_statut}}>
+                <option value='#VALEUR'[ (#VALEUR|=={#ENV{cicasstatutcrea}}|oui)selected='selected']>#VALEUR</option>
+            </BOUCLE_statutcrea>
+            </select><br />
+        </B_statutcrea>
+        [<span class='erreur'>(#ENV**{erreurs}|table_valeur{cicasstatutcrea})</span>]
+
+
+
         <br /><input type='submit' name='ok' value='Valider' />
     </form>
 #BOITE_FERMER

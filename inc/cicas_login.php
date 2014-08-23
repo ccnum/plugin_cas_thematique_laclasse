@@ -136,6 +136,29 @@ if ($ci_cas_userid=phpCAS::getUser()) {
 				)
 			);
 	}	
+
+	// Si l'auteur a un compte CAS qui n'existe pas dans la base SPIP
+	// On lui crèe un compte à la volée si c'est possible
+	if (!isset($auteur['id_auteur']) && $auteur['statut'] = lire_config('cicas/cicasstatutcrea')) {
+    	$auteur['source'] = 'cas';
+    	$auteur['pass'] = '';
+    	    	
+    	if (lire_config('cicas/cicasuid') == 'email') {
+		    $auteur['email'] = $ci_cas_userid;
+		    $auteur['login'] = '';    	
+    	}
+
+    	if (lire_config('cicas/cicasuid') == 'login') {
+		    $auteur['email'] = '';
+		    $auteur['login'] = $ci_cas_userid;
+    	}
+        
+	    // rajouter le statut indiqué à l'install
+		$r = sql_insertq('spip_auteurs', $auteur);
+		
+		// On recharge le profile utilisateur créé
+		$auteur = cicas_verifier_identifiant($ci_cas_userid);
+	}
 	
 	if (isset($auteur['id_auteur'])) {
 

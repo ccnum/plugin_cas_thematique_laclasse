@@ -11,8 +11,10 @@
             $valeurs['cicasrepertoire'] = $GLOBALS['ciconfig']['cicasrepertoire'];
             $valeurs['cicasport'] = $GLOBALS['ciconfig']['cicasport'];
             $valeurs['cicasuid'] = $GLOBALS['ciconfig']['cicasuid'];
-            $valeurs['ciedit'] = $ciedit;
             $valeurs['ci_tableau_uid'] = lire_config('cicas/cuid_list',array('login','email'));
+            $valeurs['cicasstatutcrea'] = lire_config('cicas/cicasstatutcrea');
+            $valeurs['tableau_statut'] = array('0minirezo','1comite','6forum');
+            $valeurs['ciedit'] = $ciedit;
         }        
         return $valeurs;
     }
@@ -23,6 +25,10 @@
         $cicasuid = _request('cicasuid');
         if (!in_array($cicasuid,lire_config('cicas/cuid_list',array('login','email'))))
             $erreurs['cicasuid'] = "uid CAS invalide";
+
+        $cicasstatutcrea = _request('cicasstatutcrea');
+        if (!empty($cicasstatutcrea) && !in_array($cicasstatutcrea,array('0minirezo','1comite','6forum')))
+            $erreurs['cicasstatutcrea'] = "Choix de statut invalide";
 
         return $erreurs;
     }
@@ -43,6 +49,7 @@
 	    	$cicas_config['cicasrepertoire'] = "/"._request('cicasrepertoire');
 
     	$cicas_config['cicasport'] = _request('cicasport');
+        $cicas_config['cicasstatutcrea'] = _request('cicasstatutcrea');
     
         ecrire_config('cicas',$cicas_config);
         lire_metas();
