@@ -39,6 +39,10 @@
         if (!empty($cicasstatutcrea) && !in_array($cicasstatutcrea,array('0minirezo','1comite','6forum')))
             $erreurs['cicasstatutcrea'] = "Choix de statut invalide";
 
+        $cicasport = _request('cicasport');
+        if (!empty($cicasport) && !is_numeric($cicasport))
+            $erreurs['cicasport'] = "Le port doit être un nombre";
+
         return $erreurs;
     }
 
@@ -60,7 +64,7 @@
     	else
 	    	$cicas_config['cicasrepertoire'] = "/"._request('cicasrepertoire');
 
-    	$cicas_config['cicasport'] = _request('cicasport');
+    	$cicas_config['cicasport'] = (int)_request('cicasport');
         $cicas_config['cicasstatutcrea'] = _request('cicasstatutcrea');
     
         if ($index == 1)
