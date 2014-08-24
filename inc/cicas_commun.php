@@ -306,7 +306,7 @@ function cicas_verifier_identifiant($ci_cas_userid) {
  * @param : aucun
  * @return : false si parametrage par fichier, sinon true
  */
-function cicas_lire_meta() {
+function cicas_lire_meta($index = 1) {
 	
 	$return = true;
 	
@@ -335,8 +335,14 @@ function cicas_lire_meta() {
 			// configuration du plugin
 			$tableau = array();
 			$tableau = @unserialize($GLOBALS['meta']['cicas']);
-	
+
+		         // Parametre tout serveur CAS
 			$GLOBALS['ciconfig']['cicas'] = $tableau['cicas'];
+
+            		// Chargement de la configuration demandée
+			if ($index > 1) {
+	  			$tableau = $tableau['config'.$index];
+			}	
 			$GLOBALS['ciconfig']['cicasuid'] = $tableau['cicasuid'];
 			$GLOBALS['ciconfig']['cicasurldefaut'] = $tableau['cicasurldefaut'];
 			$GLOBALS['ciconfig']['cicasrepertoire'] = $tableau['cicasrepertoire'];
