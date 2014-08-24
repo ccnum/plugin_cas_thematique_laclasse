@@ -11,9 +11,13 @@
         <div class='ajax'>
             #FORMULAIRE_CICAS_AUTH_MODE
         </div>
-        <div class='ajax'>
-            #FORMULAIRE_CICAS_SERVER
-        </div>
+
+        <BOUCLE_enumere(DATA){enum 1, #CONFIG{cicas/server_nb,1}}>
+            <div class='ajax'>
+                #FORMULAIRE_CICAS_SERVER*{#VALEUR}
+            </div>
+        </BOUCLE_enumere>
+
      
     #BOITE_FERMER
      

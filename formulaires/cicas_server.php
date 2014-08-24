@@ -3,7 +3,7 @@
     include_spip('inc/config');
     include_spip('inc/cicas_commun');
 
-    function formulaires_cicas_server_charger() {
+    function formulaires_cicas_server_charger($index = 1) {
         $valeurs = array();
 
         if ($ciedit = cicas_lire_meta()) {
@@ -19,7 +19,7 @@
         return $valeurs;
     }
 
-    function formulaires_cicas_server_verifier() {
+    function formulaires_cicas_server_verifier($index = 1) {
         $erreurs = array();
 
         $cicasuid = _request('cicasuid');
@@ -33,7 +33,7 @@
         return $erreurs;
     }
 
-    function formulaires_cicas_server_traiter() {
+    function formulaires_cicas_server_traiter($index = 1) {
         include_spip('inc/meta');
         
         $res = array();
