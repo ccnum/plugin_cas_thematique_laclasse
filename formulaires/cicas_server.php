@@ -6,22 +6,24 @@
     function formulaires_cicas_server_charger($index = 1) {
         $valeurs = array();
 
-        if ($index == 1 && $ciedit = cicas_lire_meta()) {
+        $ciedit = cicas_lire_meta();
+
+        if ($index == 1 && $ciedit) {
             $valeurs['cicasurldefaut'] = $GLOBALS['ciconfig']['cicasurldefaut'];
             $valeurs['cicasrepertoire'] = $GLOBALS['ciconfig']['cicasrepertoire'];
             $valeurs['cicasport'] = $GLOBALS['ciconfig']['cicasport'];
             $valeurs['cicasuid'] = $GLOBALS['ciconfig']['cicasuid'];
             $valeurs['cicasstatutcrea'] = lire_config('cicas/cicasstatutcrea');
-            $valeurs['ciedit'] = $ciedit;
         }        
 
-        if ($index > 1 ) {
+        if ($index > 1 && $ciedit) {
             $valeurs = lire_config('cicas/config'.$index,array());
             $valeurs['ciedit'] = true;
         }
 
         $valeurs['ci_tableau_uid'] = lire_config('cicas/cuid_list',array('login','email'));
         $valeurs['tableau_statut'] = array('0minirezo','1comite','6forum');
+        $valeurs['ciedit'] = $ciedit;
 
         return $valeurs;
     }
