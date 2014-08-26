@@ -52,6 +52,8 @@ for ($i = $_SESSION['cicas']['config_id']; $i <= lire_config('cicas/server_nb',1
 }
 
 if ($auth == false) {
+    session_regenerate_id();
+    unset($_SESSION['phpCAS']);
     $_SESSION['cicas']['config_id'] = 1;
     cicas_init_phpCAS($_SESSION['cicas']['config_id']);
 }
