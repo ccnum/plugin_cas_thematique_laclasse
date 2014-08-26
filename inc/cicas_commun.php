@@ -360,4 +360,56 @@ function cicas_lire_meta($index = 1) {
     return $return;
 }
 
+
+function cicas_init_phpCAS($i = 1) {
+
+    // lire la configuration du plugin
+    unset($GLOBALS['ciconfig']);
+    cicas_lire_meta($i);
+    $_SESSION['cicas']['config_id'] = $i;
+
+    // phpCAS::setDebug();
+
+    // Déterminer l'origine de l'appel (intranet, internet, ...)
+    // .i2 ou .ader.gouv.fr ou .gouv.fr ou .agri
+    $ciurlcas=cicas_url_serveur_cas();	
+
+    // initialise phpCAS
+    $cirep='';
+    $ciport=intval($GLOBALS['ciconfig']['cicasport']);
+    if (isset($GLOBALS['ciconfig']['cicasrepertoire'])) $cirep=$GLOBALS['ciconfig']['cicasrepertoire'];
+
+    phpCAS::client(CAS_VERSION_2_0,$ciurlcas,$ciport,$cirep,true,true);
+    
+
+    // si url differente pour la validation du ticket  
+    if (isset($GLOBALS['ciconfig']['cicas_svu_url']) AND $GLOBALS['ciconfig']['cicas_svu_url']){
+	    $ci_svu = 'https://'.$GLOBALS['ciconfig']['cicas_svu_url'];
+
+        if (isset($GLOBALS['ciconfig']['cicas_svu_port']) AND $GLOBALS['ciconfig']['cicas_svu_port']!=443)
+            $ci_svu .= ':'.$GLOBALS['ciconfig']['cicas_svu_port'];
+
+        if (isset($GLOBALS['ciconfig']['cicas_svu_repertoire']))  
+	        $ci_svu .= $GLOBALS['ciconfig']['cicas_svu_repertoire'];
+
+        $ci_svu .= '/serviceValidate';
+
+	    //phpCAS::setServerServiceValidateURL($ci_svu);
+    }	
+
+    // langue
+    phpCAS::setLang(cicas_lang_phpcas($_GET['lang']));
+
+    // enlever le pied de page de CAS 
+    phpCAS::SetHTMLFooter('<hr>');
+
+    // Pour les versions récentes de phpCAS
+    /*
+    if (method_exists('phpCAS','setNoCasServerValidation')) {
+	    phpCAS::setNoCasServerValidation();
+    }
+    */
+    phpCAS::setNoCasServerValidation();
+}
+
 ?>
