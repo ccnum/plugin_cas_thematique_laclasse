@@ -306,10 +306,13 @@ function cicas_verifier_identifiant($ci_cas_userid) {
  * @param : aucun
  * @return : false si parametrage par fichier, sinon true
  */
-function cicas_lire_meta($index = 1) {
+function cicas_lire_meta($index = null) {
 	
 	$return = true;
 	
+	if (isset($_SESSION['cicas']['config_id']) && is_numeric($_SESSION['cicas']['config_id']) && !empty($index))
+	    $index = $_SESSION['cicas']['config_id'];
+
 	if (!isset($GLOBALS['ciconfig']['cicas'])) {
 
 		$GLOBALS['ciconfig']['cicas'] = '';
