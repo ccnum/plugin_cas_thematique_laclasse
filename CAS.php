@@ -312,10 +312,10 @@ class phpCAS
      * and phpCAS::setDebug()).
      */
     public static function client($server_version, $server_hostname,
-        $server_port, $server_uri, $changeSessionID = true
+        $server_port, $server_uri, $changeSessionID = true, $force = false
     ) {
         phpCAS :: traceBegin();
-        if (is_object(self::$_PHPCAS_CLIENT)) {
+        if (is_object(self::$_PHPCAS_CLIENT) && (! $force === true) ) {
             phpCAS :: error(self::$_PHPCAS_INIT_CALL['method'] . '() has already been called (at ' . self::$_PHPCAS_INIT_CALL['file'] . ':' . self::$_PHPCAS_INIT_CALL['line'] . ')');
         }
         if (gettype($server_version) != 'string') {
@@ -364,10 +364,10 @@ class phpCAS
      * and phpCAS::setDebug()).
      */
     public static function proxy($server_version, $server_hostname,
-        $server_port, $server_uri, $changeSessionID = true
+        $server_port, $server_uri, $changeSessionID = true, $force = false
     ) {
         phpCAS :: traceBegin();
-        if (is_object(self::$_PHPCAS_CLIENT)) {
+        if (is_object(self::$_PHPCAS_CLIENT) && (! $force === true) ) {
             phpCAS :: error(self::$_PHPCAS_INIT_CALL['method'] . '() has already been called (at ' . self::$_PHPCAS_INIT_CALL['file'] . ':' . self::$_PHPCAS_INIT_CALL['line'] . ')');
         }
         if (gettype($server_version) != 'string') {
