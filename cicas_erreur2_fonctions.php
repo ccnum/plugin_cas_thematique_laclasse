@@ -22,7 +22,7 @@ function cicas_logout_cas() {
 	if(isset($_COOKIE['cicas_sso']))
 		spip_setcookie('cicas_sso', '', time() - 3600);
 	
-	// Déterminer l'origine de l'appel (intranet, internet, ...)
+	// DÃ©terminer l'origine de l'appel (intranet, internet, ...)
 	// .i2 ou .ader.gouv.fr ou .gouv.fr ou .agri
 	$ciurlcas=cicas_url_serveur_cas();	
 
@@ -35,7 +35,7 @@ function cicas_logout_cas() {
 	
 	phpCAS::setLang(cicas_lang_phpcas($_GET['lang']));
 
-	// Déterminer l'url retour
+	// DÃ©terminer l'url retour
 	$ci_url_retour = cicas_url_retour('');
 	
 
@@ -44,7 +44,7 @@ function cicas_logout_cas() {
 		// deconnexion de CAS avec l'url retour
 /*		
 		if (method_exists('phpCAS','logoutWithUrl')) {
-			// Compatibilité avec les versions récentes de phpCAS
+			// CompatibilitÃ© avec les versions rÃ©centes de phpCAS
 			phpCAS::logoutWithUrl(urlencode($ci_url_retour));
 		} else {
 			phpCAS::logout(urlencode($ci_url_retour));

@@ -9,7 +9,7 @@ include_spip('inc/cookie');
 include_spip('inc/filtres'); 
 
 /**
- * Détermination du HOST
+ * DÃ©termination du HOST
  *
  * @param : aucun
  * @return : host
@@ -21,7 +21,7 @@ function cicas_url_host() {
 	// lire la configuration du plugin
 	cicas_lire_meta();
 	
-	// ordre de recherche par défaut (celui de phpCAS)
+	// ordre de recherche par dÃ©faut (celui de phpCAS)
 	$cicashostordre = array('HTTP_X_FORWARDED_SERVER','SERVER_NAME','HTTP_HOST');
 	
 	// ordre de recherche personnalise dans le fichier de parametrage config/_config_cas.php
@@ -45,7 +45,7 @@ function cicas_url_host() {
 
 
 /**
- * Détermination de l'url de retour
+ * DÃ©termination de l'url de retour
  *
  * @param : demande de redirection (url)
  * @return : url de retour
@@ -86,13 +86,13 @@ function cicas_url_retour($url) {
 
 
 /**
- * Déterminer l'URL du serveur CAS (intranet, internet, ...)
- * correspondant à l'origine de l'appel (.i2 ou .ader.gouv.fr ou .gouv.fr ou .agri)
+ * DÃ©terminer l'URL du serveur CAS (intranet, internet, ...)
+ * correspondant Ã  l'origine de l'appel (.i2 ou .ader.gouv.fr ou .gouv.fr ou .agri)
  * Les correspondances figurent dans le fichier de parametrage
  * sinon l'adresse par defaut est utilisee
  *
  * @param : aucun
- * @return :  URL du serveur CAS correspondant à l'origine de l'appel
+ * @return :  URL du serveur CAS correspondant Ã  l'origine de l'appel
  */
 function cicas_url_serveur_cas() {
 
@@ -127,7 +127,7 @@ function cicas_url_serveur_cas() {
 
 
 /**
- * Détermination du code de langue de phpCAS qui correspond au code de langue de SPIP
+ * DÃ©termination du code de langue de phpCAS qui correspond au code de langue de SPIP
  *
  * @param : code de langue de SPIP
  * @return : code de langue de phpCAS
@@ -192,7 +192,7 @@ function cicas_url_cible($prive=null){
 
 
 /**
- * L'URL correspond-t-elle à l'espace privé de SPIP ?
+ * L'URL correspond-t-elle Ã  l'espace privÃ© de SPIP ?
  *
  * @param : URL
  * @return : true ou false
@@ -251,7 +251,7 @@ function cicas_verifier_identifiant($ci_cas_userid) {
 					switch ($row['statut']) {
 					case '0minirezo':
 						if ($ci_statut=='0minirezo') {
-							// garder le précédent si le suivant est un admin restreint
+							// garder le prÃ©cÃ©dent si le suivant est un admin restreint
 							$cinewid=$row['id_auteur'];
 							if (spip_version()>=3)
 								$cirestreint = sql_countsel("spip_auteurs_liens", "objet='rubrique' AND id_auteur=".$cinewid);
@@ -342,7 +342,7 @@ function cicas_lire_meta($index = null) {
 		         // Parametre tout serveur CAS
 			$GLOBALS['ciconfig']['cicas'] = $tableau['cicas'];
 
-            		// Chargement de la configuration demandée
+            		// Chargement de la configuration demandÃ©e
 			if ($index > 1) {
 	  			$tableau = $tableau['config'.$index];
 			}	
@@ -352,7 +352,7 @@ function cicas_lire_meta($index = null) {
 			$GLOBALS['ciconfig']['cicasport'] = $tableau['cicasport'];
 		}
 	
-		// valeur par défaut
+		// valeur par dÃ©faut
 		if (!isset($GLOBALS['ciconfig']['cicas']))
 			$GLOBALS['ciconfig']['cicas'] = 'non';
 		elseif ($GLOBALS['ciconfig']['cicas']=='')
@@ -373,7 +373,7 @@ function cicas_init_phpCAS($i = 1) {
 
     // phpCAS::setDebug();
 
-    // Déterminer l'origine de l'appel (intranet, internet, ...)
+    // DÃ©terminer l'origine de l'appel (intranet, internet, ...)
     // .i2 ou .ader.gouv.fr ou .gouv.fr ou .agri
     $ciurlcas=cicas_url_serveur_cas();	
 
@@ -406,7 +406,7 @@ function cicas_init_phpCAS($i = 1) {
     // enlever le pied de page de CAS 
     phpCAS::SetHTMLFooter('<hr>');
 
-    // Pour les versions récentes de phpCAS
+    // Pour les versions rÃ©centes de phpCAS
     /*
     if (method_exists('phpCAS','setNoCasServerValidation')) {
 	    phpCAS::setNoCasServerValidation();

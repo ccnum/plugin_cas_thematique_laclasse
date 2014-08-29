@@ -72,7 +72,7 @@ function action_logout_dist()
 			if(isset($_COOKIE['cicas_sso']))
 				spip_setcookie('cicas_sso', '', time() - 3600);
 			
-			// Déterminer l'origine de l'appel (intranet, internet, ...)
+			// DÃ©terminer l'origine de l'appel (intranet, internet, ...)
 			// .i2 ou .ader.gouv.fr ou .gouv.fr ou .agri
 			$ciurlcas=cicas_url_serveur_cas();	
 		
@@ -85,7 +85,7 @@ function action_logout_dist()
 			
 			phpCAS::setLang(cicas_lang_phpcas($_GET['lang']));
 	
-			// Déterminer l'url retour
+			// DÃ©terminer l'url retour
 			$ci_url_retour = cicas_url_retour($url);
 			
 			// deconnexion de CAS avec l'url retour	
