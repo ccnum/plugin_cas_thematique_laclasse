@@ -1,7 +1,7 @@
 <paquet
 	prefix="cicas"
 	categorie="auteur"
-	version="1.7.3"
+	version="1.7.4"
 	etat="stable"
 	compatibilite="[3.0.0;]"
 	logo="prive/themes/spip/images/pyramides-32.png"

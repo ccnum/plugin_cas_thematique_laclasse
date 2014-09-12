@@ -139,6 +139,21 @@ if ($ci_cas_userid=phpCAS::getUser()) {
 		    $auteur['login'] = $ci_cas_userid;
     	}
         
+        //Provisionner les information CAS dans les informations auteurs
+        if ($_SESSION['cicas']['config_id'] == 1)
+            $attributes = lire_config('cicas/attributes');
+        else
+            $attributes = lire_config('cicas/config'.$_SESSION['cicas']['config_id'].'/attributes');
+
+        foreach($attributes as $attribute => $champ) {
+            if (phpCAS::hasAttribute($attribute)) {
+                $auteur[$champ] .= " ".phpCAS::getAttribute($attribute);
+            } else {
+                $auteur[$champ] .= " ".$attribute;
+            }
+            $auteur[$champ] = trim($auteur[$champ]);
+        }
+
 	    // rajouter le statut indiqué à l'install
 		$r = sql_insertq('spip_auteurs', $auteur);
 		
