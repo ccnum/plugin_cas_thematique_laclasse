@@ -125,8 +125,8 @@ if ($ci_cas_userid=phpCAS::getUser()) {
 
 	// Si l'auteur a un compte CAS qui n'existe pas dans la base SPIP
 	// On lui crèe un compte à la volée si c'est possible
-    $auteur['statut'] = ($_SESSION['cicas']['config_id'] == 1) ? lire_config('cicas/cicasstatutcrea') : lire_config('cicas/config'.$_SESSION['cicas']['config_id'].'/cicasstatutcrea');
-	if (!isset($auteur['id_auteur']) && $auteur['statut']) {
+    $auteur['statut_forced'] = ($_SESSION['cicas']['config_id'] == 1) ? lire_config('cicas/cicasstatutcrea') : lire_config('cicas/config'.$_SESSION['cicas']['config_id'].'/cicasstatutcrea');
+	if (!isset($auteur['id_auteur']) && $auteur['statut_forced']) {
     	$auteur['source'] = 'cas';
     	$auteur['pass'] = '';
 
@@ -164,6 +164,8 @@ if ($ci_cas_userid=phpCAS::getUser()) {
             $auteur[$champ] = trim($auteur[$champ]);
         }
 
+        $auteur['statut'] = $auteur['statut_forced'];
+        unset($auteur['statut_forced']);
 	    // rajouter le statut indiqué à l'install
 		$r = sql_insertq('spip_auteurs', $auteur);
 		
