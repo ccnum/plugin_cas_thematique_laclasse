@@ -125,16 +125,19 @@ if ($ci_cas_userid=phpCAS::getUser()) {
 
 	// Si l'auteur a un compte CAS qui n'existe pas dans la base SPIP
 	// On lui crèe un compte à la volée si c'est possible
-	if (!isset($auteur['id_auteur']) && $auteur['statut'] = lire_config('cicas/cicasstatutcrea')) {
+    $auteur['statut'] = ($_SESSION['cicas']['config_id'] == 1) ? lire_config('cicas/cicasstatutcrea') : lire_config('cicas/config'.$_SESSION['cicas']['config_id'].'/cicasstatutcrea');
+	if (!isset($auteur['id_auteur']) && $auteur['statut']) {
     	$auteur['source'] = 'cas';
     	$auteur['pass'] = '';
-    	    	
-    	if (lire_config('cicas/cicasuid') == 'email') {
+
+        $cicasuid = ($_SESSION['cicas']['config_id'] == 1) ? lire_config('cicas/cicasuid') : lire_config('cicas/config'.$_SESSION['cicas']['config_id'].'/cicasuid');
+
+    	if ($cicasuid == 'email') {
 		    $auteur['email'] = $ci_cas_userid;
 		    $auteur['login'] = '';    	
     	}
 
-    	if (lire_config('cicas/cicasuid') == 'login') {
+    	if ($cicasuid == 'login') {
 		    $auteur['email'] = '';
 		    $auteur['login'] = $ci_cas_userid;
     	}
