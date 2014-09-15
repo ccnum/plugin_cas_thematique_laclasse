@@ -1,0 +1,27 @@
+[(#BOITE_OUVRIR{<:cicas:eq_titre_serveur_nb_cas:>,'important'})]
+
+    [<p class='formulaire_ok'>(#ENV*{message_ok})</p>]
+    [<p class='formulaire_erreur'>(#ENV*{message_erreur})</p>]
+    <form action='#ENV{action}' method='post'>
+        #ACTION_FORMULAIRE{#ENV{action}}
+
+        [(#REM) server_nb]
+        <label for='server_nb'><:cicas:eq_texte_server_nb:></label><br />
+        <input type='text' name='server_nb' id='server_nb' value="#ENV{server_nb}" size='40' class='formo' /><br />
+        [<span class='erreur'>(#ENV**{erreurs}|table_valeur{server_nb})</span>]<br />
+
+        [(#REM) server_update]
+        <label for='update_auteur_vide'><:cicas:eq_update_auteur_vide:></label><br />
+        <input type='checkbox' name='update_auteur_vide' id='update_auteur_vide' [checked="(#ENV{update_auteur_vide}|oui) checked"] class='formo' /><br />
+        [<span class='erreur'>(#ENV**{erreurs}|table_valeur{update_auteur_vide})</span>]<br />
+
+        [(#REM) server_all]
+        <label for='update_auteur_all'><:cicas:eq_update_auteur_all:></label><br />
+        <input type='checkbox' name='update_auteur_all' id='update_auteur_all' [checked="(#ENV{update_auteur_all}|oui) checked"] class='formo' /><br />
+        [<span class='erreur'>(#ENV**{erreurs}|table_valeur{update_auteur_all})</span>]<br />
+
+
+        <br /><input type='submit' name='ok' value='Valider' />
+    </form>
+#BOITE_FERMER
+
