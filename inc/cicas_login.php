@@ -145,7 +145,14 @@ if ($ci_cas_userid=phpCAS::getUser()) {
         else
             $attributes = lire_config('cicas/config'.$_SESSION['cicas']['config_id'].'/attributes');
 
+        $trouver_table = charger_fonction('trouver_table', 'base');
+        $auteur_desc = $trouver_table('spip_auteurs');
+
         foreach($attributes as $attribute => $champ) {
+            //Ne pas traiter si le champ auteur n'existe pas
+            if (!isset($auteur_desc['field'][$champ]))
+                continue;
+
             if (phpCAS::hasAttribute($attribute)) {
                 $auteur[$champ] .= " ".phpCAS::getAttribute($attribute);
             } else {
