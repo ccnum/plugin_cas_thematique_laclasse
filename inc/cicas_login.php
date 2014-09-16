@@ -142,6 +142,17 @@ if ($ci_cas_userid=phpCAS::getUser()) {
 		    $auteur['login'] = $ci_cas_userid;
     	}
         
+        $auteur['statut'] = $auteur['statut_forced'];
+        unset($auteur['statut_forced']);
+	    // rajouter le statut indiqué à l'install
+		$r = sql_insertq('spip_auteurs', $auteur);
+
+		// On recharge le profil utilisateur créé
+		$auteur = cicas_verifier_identifiant($ci_cas_userid);
+	}
+
+    //Mettre à jour le profil auteur si demandé
+    if (isset($auteur['id_auteur']) && (lire_config('cicas/update_auteur_all') || lire_config('cicas/update_auteur_vide'))) {
         //Provisionner les information CAS dans les informations auteurs
         if ($_SESSION['cicas']['config_id'] == 1)
             $attributes = lire_config('cicas/attributes');
@@ -151,27 +162,33 @@ if ($ci_cas_userid=phpCAS::getUser()) {
         $trouver_table = charger_fonction('trouver_table', 'base');
         $auteur_desc = $trouver_table('spip_auteurs');
 
+        //Lister les champs à actualiser
+        $auteur_update = array();
         foreach($attributes as $attribute => $champ) {
-            //Ne pas traiter si le champ auteur n'existe pas
-            if (!isset($auteur_desc['field'][$champ]))
+            if (isset($auteur_desc['field'][$champ]) && lire_config('cicas/update_auteur_all'))
+                $auteur_update[$champ] = '';
+
+            if (isset($auteur_desc['field'][$champ]) && empty($auteur[$champ]) && lire_config('cicas/update_auteur_vide'))
+                $auteur_update[$champ] = '';
+        }
+
+        //Affecter les données
+        foreach($attributes as $attribute => $champ) {
+            //Ne pas traiter si le champ auteur n'existe pas ou n'est pas à mettre à jour
+            if (!isset($auteur_desc['field'][$champ]) || !isset($auteur_update[$champ]))
                 continue;
 
             if (phpCAS::hasAttribute($attribute)) {
-                $auteur[$champ] .= " ".phpCAS::getAttribute($attribute);
+                $auteur_update[$champ] .= " ".phpCAS::getAttribute($attribute);
             } else {
-                $auteur[$champ] .= " ".$attribute;
+                $auteur_update[$champ] .= " ".$attribute;
             }
-            $auteur[$champ] = trim($auteur[$champ]);
+            $auteur_update[$champ] = trim($auteur_update[$champ]);
         }
 
-        $auteur['statut'] = $auteur['statut_forced'];
-        unset($auteur['statut_forced']);
-	    // rajouter le statut indiqué à l'install
-		$r = sql_insertq('spip_auteurs', $auteur);
-		
-		// On recharge le profile utilisateur créé
-		$auteur = cicas_verifier_identifiant($ci_cas_userid);
-	}
+        //Pousser les attributs CAS dans le profil auteur
+		$r = sql_updateq('spip_auteurs', $auteur_update, 'id_auteur ='.$auteur['id_auteur']);
+    }
 	
 	if (isset($auteur['id_auteur'])) {
 
