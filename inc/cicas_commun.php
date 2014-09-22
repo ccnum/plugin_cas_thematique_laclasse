@@ -230,7 +230,7 @@ function cicas_verifier_identifiant($ci_cas_userid) {
 		$orderby = "nom";
 		
 		if ($GLOBALS['ciconfig']['cicasuid']=="login")
-			$where = "(login='".$ci_cas_userid."') AND statut<>'5poubelle'";
+			$where = "(login='".strtolower($ci_cas_userid)."') AND statut<>'5poubelle'";
 			
 
 		$cinumrows = sql_countsel($from, $where);
