@@ -133,13 +133,13 @@ if ($ci_cas_userid=phpCAS::getUser()) {
         $cicasuid = ($_SESSION['cicas']['config_id'] == 1) ? lire_config('cicas/cicasuid') : lire_config('cicas/config'.$_SESSION['cicas']['config_id'].'/cicasuid');
 
     	if ($cicasuid == 'email') {
-		    $auteur['email'] = $ci_cas_userid;
+		    $auteur['email'] = strtolower($ci_cas_userid);
 		    $auteur['login'] = '';    	
     	}
 
     	if ($cicasuid == 'login') {
 		    $auteur['email'] = '';
-		    $auteur['login'] = $ci_cas_userid;
+		    $auteur['login'] = strtolower($ci_cas_userid);
     	}
         
         $auteur['statut'] = $auteur['statut_forced'];
