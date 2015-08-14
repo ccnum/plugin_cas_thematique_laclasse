@@ -38,17 +38,29 @@ if (empty($_SESSION['cicas']['config_id']) || ($_SESSION['cicas']['config_id'] >
 
 $auth = false;
 
-for ($i = $_SESSION['cicas']['config_id']; $i <= lire_config('cicas/server_nb',1); $i++) {
-
-    cicas_init_phpCAS($i);
-
-    if ($auth = phpCAS::checkAuthentication()) {
-        break;
-    }
-
-    session_regenerate_id();
+//On force l'ent en paramètre
+if (isset($_GET['ent'])&&(is_numeric($_GET['ent'])))
+{
+	cicas_init_phpCAS($_GET['ent']);
+	session_regenerate_id();
     unset($_SESSION['phpCAS']);
-    $_SESSION['cicas']['config_id'] = $i;
+	$_SESSION['cicas']['config_id'] = $_GET['ent'];
+	$auth=true;
+}
+else
+{
+	for ($i = $_SESSION['cicas']['config_id']; $i <= lire_config('cicas/server_nb',1); $i++) {
+
+	    cicas_init_phpCAS($i);
+
+	    if ($auth = phpCAS::checkAuthentication()) {
+	        break;
+	    }
+
+	    session_regenerate_id();
+	    unset($_SESSION['phpCAS']);
+	    $_SESSION['cicas']['config_id'] = $i;
+	}
 }
 
 if ($auth == false) {
@@ -261,3 +273,4 @@ if (!headers_sent($filename, $linenum)){
 }
 
 ?>
+
