@@ -37,18 +37,45 @@ if (empty($_SESSION['cicas']['config_id']) || ($_SESSION['cicas']['config_id'] >
     $_SESSION['cicas']['config_id'] = 1;
 
 $auth = false;
+$ent = false;
 
-//On force l'ent si en paramètre
-if (isset($_GET['ent'])&&(is_numeric($_GET['ent'])))
+//Calcul de l'ent si passage de paramètres
+	//Soit par nom de domaine
+	if (isset($_GET['domaine']))
+	{
+		$tableau = array();
+		$tableau = @unserialize($GLOBALS['meta']['cicas']);
+
+		for ($i = 1; $i <= lire_config('cicas/server_nb',1); $i++) 
+		{			
+			// test
+			if ($i > 1) $domaine = $tableau['config'.$i]['cicasurldefaut']; else $domaine = $tableau['cicasurldefaut'];
+			
+			//S'agit il du même domaine
+			if 	($_GET['domaine'] == $domaine) 
+			{
+				$ent = $i;
+				break;
+			}
+		}
+	}
+
+	//Soit par index de l'ent
+	if (isset($_GET['ent'])&&(is_numeric($_GET['ent'])))
+	{
+		$ent=$_GET['ent'];
+	}
+
+//On force l'authentification sur un CAS si l'ent existe
+if ($sent !== false)
 {
-	//session_regenerate_id();
-    //unset($_SESSION['phpCAS']);
-    $_SESSION['cicas']['config_id'] = $_GET['ent'];
-	cicas_init_phpCAS($_GET['ent']);
+    $_SESSION['cicas']['config_id'] = $ent;
+	cicas_init_phpCAS($ent);
    	$auth = true;
 }
 else
 {
+	//Sinon on les vérifie séquentiellement
 	for ($i = $_SESSION['cicas']['config_id']; $i <= lire_config('cicas/server_nb',1); $i++) {
 
 	    cicas_init_phpCAS($i);
