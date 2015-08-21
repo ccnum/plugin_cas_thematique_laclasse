@@ -16,16 +16,13 @@ include_spip('inc/cookie');
 include_spip('inc/texte');
 include_spip('base/abstract_sql');
 include_spip('inc/headers');
-
 include_spip('inc/cicas_commun');
 
 // import phpCAS lib
 include_spip('CAS');
 
-
 // redirection par defaut
 $ciredirect = generer_url_public('');
-
 
 session_start();
 
@@ -37,7 +34,7 @@ if (empty($_SESSION['cicas']['config_id']) || ($_SESSION['cicas']['config_id'] >
     $_SESSION['cicas']['config_id'] = 1;
 
 $auth = false;
-$ent = false;
+$id_ent = 0;
 
 //Calcul de l'ent si passage de paramètres
 	//Soit par nom de domaine
@@ -46,56 +43,64 @@ $ent = false;
 		$tableau = array();
 		$tableau = @unserialize($GLOBALS['meta']['cicas']);
 
-		for ($i = 1; $i <= lire_config('cicas/server_nb',1); $i++) 
+		for ($j = 1; $j <= lire_config('cicas/server_nb',1); $j++) 
 		{			
 			// test
-			if ($i > 1) $domaine = $tableau['config'.$i]['cicasurldefaut']; else $domaine = $tableau['cicasurldefaut'];
+			if ($i > j) $domaine = $tableau['config'.$j]['cicasurldefaut']; else $domaine = $tableau['cicasurldefaut'];
 			
 			//S'agit il du même domaine
 			if 	($_GET['domaine'] == $domaine) 
 			{
-				$ent = $i;
+				$id_ent = $j;
 				break;
 			}
 		}
 	}
 
 	//Soit par index de l'ent
-	if (isset($_GET['ent'])&&(is_numeric($_GET['ent'])))
+	//if (isset($_GET['ent']))	
+	if (isset($_GET['ent'])&&(is_numeric($_GET['ent']))&&($_GET['ent']>0))
 	{
-		$ent=$_GET['ent'];
+		$id_ent=$_GET['ent'];
 	}
+
 
 //On force l'authentification sur un CAS si l'ent existe
-if ($sent !== false)
-{
-    $_SESSION['cicas']['config_id'] = $ent;
-	cicas_init_phpCAS($ent);
-   	$auth = true;
-}
-else
-{
-	//Sinon on les vérifie séquentiellement
-	for ($i = $_SESSION['cicas']['config_id']; $i <= lire_config('cicas/server_nb',1); $i++) {
-
-	    cicas_init_phpCAS($i);
-
-	    if ($auth = phpCAS::checkAuthentication()) {
-	        break;
-	    }
-
-	    session_regenerate_id();
-	    unset($_SESSION['phpCAS']);
-	    $_SESSION['cicas']['config_id'] = $i;
+	if ($id_ent !== 0)
+	{
+	    //session_regenerate_id();
+		//unset($_SESSION['phpCAS']);
+		$_SESSION['cicas']['config_id'] = $id_ent;
+		cicas_init_phpCAS($id_ent);
+	   	$auth = true;
+	   	//error_log($id_ent."\n", 3, LOG_PATH);
 	}
-}
+	else
+	{
+		//Sinon on les vérifie séquentiellement
+		for ($j = $_SESSION['cicas']['config_id']; $j <= lire_config('cicas/server_nb',1); $j++) {
 
-if ($auth == false) {
-    session_regenerate_id();
-    unset($_SESSION['phpCAS']);
-    $_SESSION['cicas']['config_id'] = 1;
-    cicas_init_phpCAS($_SESSION['cicas']['config_id']);
-}
+		    cicas_init_phpCAS($j);
+
+		    if ($auth = phpCAS::checkAuthentication()) {
+			    $_SESSION['cicas']['config_id'] = $j;
+		        break;
+		    }
+		    else
+		    {
+			    session_regenerate_id();
+			    unset($_SESSION['phpCAS']);
+			}
+		}
+
+		if ($auth == false) {
+		    //session_regenerate_id();
+		    //unset($_SESSION['phpCAS']);
+		    $_SESSION['cicas']['config_id'] = 1;
+		    cicas_init_phpCAS($_SESSION['cicas']['config_id']);
+		}
+	}
+
 
 // forcer l'authentication CAS
 phpCAS::forceAuthentication();
