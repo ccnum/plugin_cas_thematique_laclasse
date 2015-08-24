@@ -46,7 +46,7 @@ $id_ent = 0;
 		for ($j = 1; $j <= lire_config('cicas/server_nb',1); $j++) 
 		{			
 			// test
-			if ($i > j) $domaine = $tableau['config'.$j]['cicasurldefaut']; else $domaine = $tableau['cicasurldefaut'];
+			if ($j > 1) $domaine = $tableau['config'.$j]['cicasurldefaut']; else $domaine = $tableau['cicasurldefaut'];
 			
 			//S'agit il du même domaine
 			if 	($_GET['domaine'] == $domaine) 
@@ -68,8 +68,6 @@ $id_ent = 0;
 //On force l'authentification sur un CAS si l'ent existe
 	if ($id_ent !== 0)
 	{
-	    //session_regenerate_id();
-		//unset($_SESSION['phpCAS']);
 		$_SESSION['cicas']['config_id'] = $id_ent;
 		cicas_init_phpCAS($id_ent);
 	   	$auth = true;
@@ -101,7 +99,6 @@ $id_ent = 0;
 		}
 	}
 
-
 // forcer l'authentication CAS
 phpCAS::forceAuthentication();
 
@@ -110,7 +107,9 @@ phpCAS::forceAuthentication();
 
 $ci_cas_userid = '';
 if ($ci_cas_userid=phpCAS::getUser()) {
-	
+	//foreach (phpCAS::getAttributes() as $key => $value) { $tt_att .= $key.':'.$value.'\n'; }
+	//error_log($tt_att."\n", 3, LOG_PATH);
+
 	$auteur = array();
 	$auteur = cicas_verifier_identifiant($ci_cas_userid);
 

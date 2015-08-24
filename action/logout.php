@@ -30,9 +30,47 @@ function action_logout_dist()
 	
 //------- Debut ajout CI -----
 	include_spip('inc/cicas_commun');
-	
+	include_spip('inc/config');
+
+	//Quel serveur CAS
+		$id_ent = 0;
+
+		if ($GLOBALS['visiteur_session']['ent'] !== '')
+		{
+
+			$tableau = array();
+			$tableau = @unserialize($GLOBALS['meta']['cicas']);
+
+			for ($j = 1; $j <= lire_config('cicas/server_nb',1); $j++) 
+			{			
+				// test
+				//if ($j > 1) $dom = $tableau['config'.$j]['cicasurldefaut']; else $dom = $tableau['cicasurldefaut'];
+				if ($j == 1) $attributes = lire_config('cicas/attributes'); else $attributes = lire_config('cicas/config'.$j.'/attributes');
+				foreach($attributes as $attribute => $champ) { if ($champ=='ent') $dom = $attribute; }
+
+				error_log($dom.":".$GLOBALS['visiteur_session']['ent']."\n", 3, LOG_PATH);
+
+				//S'agit il du même domaine
+				if 	($dom == $GLOBALS['visiteur_session']['ent']) 
+				{
+					$id_ent = $j;
+					break;
+				}
+			}
+		}
+
+	//Soit par index de l'ent
+		if (isset($_GET['ent'])&&(is_numeric($_GET['ent']))&&($_GET['ent']>0))
+		{
+			$id_ent=$_GET['ent'];
+		}
+
+	//$id
+		if ($id_ent==0) $id_ent=1;
+	   	error_log($id_ent."\n", 3, LOG_PATH);
+
 	// lire la configuration du plugin
-	cicas_lire_meta();
+		cicas_lire_meta($id_ent);
 	
 	$ciauthcas= false;
 	if ($GLOBALS['ciconfig']['cicas']=="oui" OR isset($_COOKIE['cicas_sso'])) {
