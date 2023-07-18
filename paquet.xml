@@ -1,7 +1,7 @@
 <paquet
 	prefix="cicas"
 	categorie="auteur"
-	version="1.7.5"
+	version="2.6.1"
 	etat="stable"
 	compatibilite="[3.0.0;]"
 	logo="prive/themes/spip/images/pyramides-32.png"
@@ -16,6 +16,7 @@
 	
 	<pipeline nom="recuperer_fond" inclure="cicas_pipeline.php" />
 	<pipeline nom="pre_edition" inclure="cicas_pipeline.php" />
+	<pipeline nom="formulaire_verifier" inclure="cicas_pipeline.php" />
 
 	<menu nom="cicas_config" titre="cicas:cicas_titre" parent="menu_configuration" icone="images/cicas-16.png" />
 	

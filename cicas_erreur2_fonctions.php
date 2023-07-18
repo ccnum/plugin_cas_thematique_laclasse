@@ -22,20 +22,26 @@ function cicas_logout_cas() {
 	if(isset($_COOKIE['cicas_sso']))
 		spip_setcookie('cicas_sso', '', time() - 3600);
 	
-	// Déterminer l'origine de l'appel (intranet, internet, ...)
+	// Determiner l'origine de l'appel (intranet, internet, ...)
 	// .i2 ou .ader.gouv.fr ou .gouv.fr ou .agri
-	$ciurlcas=cicas_url_serveur_cas();	
+	$ciurlcas=cicas_url_serveur_cas(0,false,true);	
 
+	// Nombre de serveurs CAS additionnels
+	$ci_nbre_serveurs_additionnels = cicas_nombre_serveurs_additionnels();
+		
+	// Lire la configuration du plugin pour la session
+	$tableau_config = cicas_lire_meta(0,false,true);
+	
 	// initialize phpCAS
 	$cirep='';
-	$ciport=intval($GLOBALS['ciconfig']['cicasport']);
-	if (isset($GLOBALS['ciconfig']['cicasrepertoire'])) $cirep=$GLOBALS['ciconfig']['cicasrepertoire'];
+	$ciport=intval($tableau_config['cicasport']);
+	if (isset($tableau_config['cicasrepertoire'])) $cirep=$tableau_config['cicasrepertoire'];
 	
 	phpCAS::client(CAS_VERSION_2_0,$ciurlcas,$ciport,$cirep);
 	
-	phpCAS::setLang(cicas_lang_phpcas($_GET['lang']));
+	phpCAS::setLang(cicas_lang_phpcas());
 
-	// Déterminer l'url retour
+	// Determiner l'url retour
 	$ci_url_retour = cicas_url_retour('');
 	
 
@@ -44,13 +50,14 @@ function cicas_logout_cas() {
 		// deconnexion de CAS avec l'url retour
 /*		
 		if (method_exists('phpCAS','logoutWithUrl')) {
-			// Compatibilité avec les versions récentes de phpCAS
+			// Compatibilite avec les versions recentes de phpCAS
 			phpCAS::logoutWithUrl(urlencode($ci_url_retour));
 		} else {
 			phpCAS::logout(urlencode($ci_url_retour));
 		}
 */
-		phpCAS::logoutWithUrl(urlencode($ci_url_retour));
+//		phpCAS::logoutWithUrl(urlencode($ci_url_retour));
+		phpCAS::logoutWithUrl($ci_url_retour);
 	}
 	
 	return '';

@@ -16,109 +16,75 @@ include_spip('inc/cookie');
 include_spip('inc/texte');
 include_spip('base/abstract_sql');
 include_spip('inc/headers');
+
 include_spip('inc/cicas_commun');
 
 // import phpCAS lib
 include_spip('CAS');
 
+
 // redirection par defaut
 $ciredirect = generer_url_public('');
 
-session_start();
+// lire la configuration du plugin
+cicas_lire_meta();
 
-if ( !isset($_SESSION['cicas']) || !is_array($_SESSION['cicas']) ) {
-     $_SESSION['cicas'] = array('config_id' => 1);
+// phpCAS::setDebug();
+
+// Nombre de serveurs CAS additionnels
+$ci_nbre_serveurs_additionnels = cicas_nombre_serveurs_additionnels();
+$ci_id_serveur_auth = '';
+
+// Cas classique (sans serveurs CAS additionnels)
+if ($ci_nbre_serveurs_additionnels<1){
+
+	// configure phpCAS
+	cicas_configure_phpCAS();
+	
+	// forcer l'authentication CAS
+	phpCAS::forceAuthentication();
+
+} else {
+// Cas avec serveurs CAS additionnels
+	$request_cicas = _request('cicas');
+
+	// Memoriser, le cas echeant, le choix de l'utilisateur dans un cookie
+	if (_request('memoriser') AND _request('memoriser')=='oui'){
+		if ($request_cicas AND ($request_cicas=='oui' OR intval($request_cicas)>=1)){
+			include_spip('inc/cookie');
+			spip_setcookie('cicas_choix', $request_cicas, time() + 365 * 24 * 3600);
+		}
+	}
+
+	// authentification CAS demandee par un clic sur le lien
+	if ($request_cicas AND intval($request_cicas)>=1){
+		$ci_id_serveur_auth = intval($request_cicas);
+		cicas_configure_phpCAS($ci_id_serveur_auth);
+		phpCAS::forceAuthentication();
+	} else {
+		cicas_configure_phpCAS();
+		phpCAS::forceAuthentication();
+	}
 }
-
-if (empty($_SESSION['cicas']['config_id']) || ($_SESSION['cicas']['config_id'] > lire_config('cicas/server_nb',1)))
-    $_SESSION['cicas']['config_id'] = 1;
-
-$auth = false;
-$id_ent = 0;
-
-//Calcul de l'ent si passage de paramètres
-	//Soit par nom de domaine
-	if (isset($_GET['domaine']))
-	{
-		$tableau = array();
-		$tableau = @unserialize($GLOBALS['meta']['cicas']);
-
-		for ($j = 1; $j <= lire_config('cicas/server_nb',1); $j++) 
-		{			
-			// test
-			if ($j > 1) $domaine = $tableau['config'.$j]['cicasurldefaut']; else $domaine = $tableau['cicasurldefaut'];
-			
-			//S'agit il du même domaine
-			if 	($_GET['domaine'] == $domaine) 
-			{
-				$id_ent = $j;
-				break;
-			}
-		}
-	}
-
-	//Soit par index de l'ent
-	//if (isset($_GET['ent']))	
-	if (isset($_GET['ent'])&&(is_numeric($_GET['ent']))&&($_GET['ent']>0))
-	{
-		$id_ent=$_GET['ent'];
-	}
-
-
-//On force l'authentification sur un CAS si l'ent existe
-	if ($id_ent !== 0)
-	{
-		$_SESSION['cicas']['config_id'] = $id_ent;
-		cicas_init_phpCAS($id_ent);
-	   	$auth = true;
-	   	//error_log($id_ent."\n", 3, LOG_PATH);
-	}
-	else
-	{
-		//Sinon on les vérifie séquentiellement
-		for ($j = $_SESSION['cicas']['config_id']; $j <= lire_config('cicas/server_nb',1); $j++) {
-
-		    cicas_init_phpCAS($j);
-
-		    if ($auth = phpCAS::checkAuthentication()) {
-			    $_SESSION['cicas']['config_id'] = $j;
-		        break;
-		    }
-		    else
-		    {
-			    session_regenerate_id();
-			    unset($_SESSION['phpCAS']);
-			}
-		}
-
-		if ($auth == false) {
-		    //session_regenerate_id();
-		    //unset($_SESSION['phpCAS']);
-		    $_SESSION['cicas']['config_id'] = 1;
-		    cicas_init_phpCAS($_SESSION['cicas']['config_id']);
-		}
-	}
-
-// forcer l'authentication CAS
-phpCAS::forceAuthentication();
 
 // A ce stade, l'utilisateur a ete authentifie par le serveur CAS
 // et l'identifiant de l'utilisateur renvoye par CAS peut etre lu avec phpCAS::getUser().
 
 $ci_cas_userid = '';
 if ($ci_cas_userid=phpCAS::getUser()) {
-	//foreach (phpCAS::getAttributes() as $key => $value) { $tt_att .= $key.':'.$value.'\n'; }
-	//error_log($tt_att."\n", 3, LOG_PATH);
-
+	
 	$auteur = array();
 	$auteur = cicas_verifier_identifiant($ci_cas_userid);
 
 	if (!isset($auteur['id_auteur'])) {
 		
-		// compatibilité avec les anciennes adresses email	
-		if (!isset($GLOBALS['ciconfig']['cicasuid']) 
-			OR $GLOBALS['ciconfig']['cicasuid']==""  
-			OR $GLOBALS['ciconfig']['cicasuid']=="email") {
+		// Lire la configuration pour cette session
+		$tableau_config = cicas_lire_meta(0,false,true);
+		
+		// compatibilite avec les anciennes adresses email
+		if (!isset($tableau_config['cicasuid']) 
+			OR $tableau_config['cicasuid']==""  
+			OR $tableau_config['cicasuid']=="email") {
 
 			$ci_pos = strpos($ci_cas_userid, '@');
 			if ($ci_pos AND $ci_pos > 0) {
@@ -130,9 +96,9 @@ if ($ci_cas_userid=phpCAS::getUser()) {
 				$cicasmailcompatible = array('equipement.gouv.fr' => 'developpement-durable.gouv.fr');
 				
 				// compatibilite figurant dans le fichier de parametrage config/_config_cas.php
-				if (isset($GLOBALS['ciconfig']['cicasmailcompatible'])) {
-					if (is_array($GLOBALS['ciconfig']['cicasmailcompatible'])) {
-						$cicasmailcompatible = $GLOBALS['ciconfig']['cicasmailcompatible'];
+				if (isset($tableau_config['cicasmailcompatible'])) {
+					if (is_array($tableau_config['cicasmailcompatible'])) {
+						$cicasmailcompatible = $tableau_config['cicasmailcompatible'];
 					}
 				}
 				
@@ -147,6 +113,45 @@ if ($ci_cas_userid=phpCAS::getUser()) {
 		}
 		
 	}
+
+	// Si l'authentification sur ce serveur CAS a reussi mais que l'auteur n'existe pas dans SPIP
+	// le creer automatiquement si le parametrage l'autorise
+	if (!isset($auteur['id_auteur']) AND isset($tableau_config['cicas_creer_auteur']) AND $tableau_config['cicas_creer_auteur']){
+		$c = array();
+		$c['login'] = '';
+		$c['pass'] = '';
+		$c['webmestre'] = 'non';
+                $c['statut'] = $tableau_config['cicas_creer_auteur'];
+                $c['source'] = 'cas';
+
+		if ($tableau_config['cicasuid']=='' OR $tableau_config['cicasuid']=='email'){
+			$c['email'] = strtolower($ci_cas_userid);
+                        $ci_tableau_cicasuid = explode('@',$ci_cas_userid);
+			$c['nom'] = strtolower($ci_tableau_cicasuid[0]);
+                        $c['login'] = $c['nom'];
+                } else {
+			$c['nom'] = $ci_cas_userid;
+                        $c['login'] = $ci_cas_userid;
+                }
+
+                // important (suite aux tests)
+                $couples = $c;
+                
+                // inserer l'auteur
+                $id_auteur = sql_insertq("spip_auteurs", $couples);
+                
+                // tracer le cas echeant
+                if (defined('_DIR_PLUGIN_CITRACE')){
+                        $commentaire = interdire_scripts(supprimer_numero($couples['nom']))
+                        .' ('.interdire_scripts($couples['email']).')'.' - statut:'.$couples['statut'];
+                        if ($citrace = charger_fonction('citrace', 'inc'))
+                            $citrace('auteur', $id_auteur, "creation automatique de l'auteur", $commentaire);
+                }	
+		
+		// seconde tentative
+		$auteur = cicas_verifier_identifiant($ci_cas_userid);
+	}
+
 
 	if (!isset($auteur['id_auteur'])) {
 		// Envoyer au pipeline
@@ -166,73 +171,6 @@ if ($ci_cas_userid=phpCAS::getUser()) {
 			);
 	}	
 
-	// Si l'auteur a un compte CAS qui n'existe pas dans la base SPIP
-	// On lui crèe un compte à la volée si c'est possible
-    $auteur['statut_forced'] = ($_SESSION['cicas']['config_id'] == 1) ? lire_config('cicas/cicasstatutcrea') : lire_config('cicas/config'.$_SESSION['cicas']['config_id'].'/cicasstatutcrea');
-	if (!isset($auteur['id_auteur']) && $auteur['statut_forced']) {
-    	$auteur['source'] = 'cas';
-    	$auteur['pass'] = '';
-
-        $cicasuid = ($_SESSION['cicas']['config_id'] == 1) ? lire_config('cicas/cicasuid') : lire_config('cicas/config'.$_SESSION['cicas']['config_id'].'/cicasuid');
-
-    	if ($cicasuid == 'email') {
-		    $auteur['email'] = strtolower($ci_cas_userid);
-		    $auteur['login'] = '';    	
-    	}
-
-    	if ($cicasuid == 'login') {
-		    $auteur['email'] = '';
-		    $auteur['login'] = strtolower($ci_cas_userid);
-    	}
-        
-        $auteur['statut'] = $auteur['statut_forced'];
-        unset($auteur['statut_forced']);
-	    // rajouter le statut indiqué à l'install
-		$r = sql_insertq('spip_auteurs', $auteur);
-
-		// On recharge le profil utilisateur créé
-		$auteur = cicas_verifier_identifiant($ci_cas_userid);
-	}
-
-    //Mettre à jour le profil auteur si demandé
-    if (isset($auteur['id_auteur']) && (lire_config('cicas/update_auteur_all') || lire_config('cicas/update_auteur_vide'))) {
-        //Provisionner les information CAS dans les informations auteurs
-        if ($_SESSION['cicas']['config_id'] == 1)
-            $attributes = lire_config('cicas/attributes');
-        else
-            $attributes = lire_config('cicas/config'.$_SESSION['cicas']['config_id'].'/attributes');
-
-        $trouver_table = charger_fonction('trouver_table', 'base');
-        $auteur_desc = $trouver_table('spip_auteurs');
-
-        //Lister les champs à actualiser
-        $auteur_update = array();
-        foreach($attributes as $attribute => $champ) {
-            if (isset($auteur_desc['field'][$champ]) && lire_config('cicas/update_auteur_all'))
-                $auteur_update[$champ] = '';
-
-            if (isset($auteur_desc['field'][$champ]) && empty($auteur[$champ]) && lire_config('cicas/update_auteur_vide'))
-                $auteur_update[$champ] = '';
-        }
-
-        //Affecter les données
-        foreach($attributes as $attribute => $champ) {
-            //Ne pas traiter si le champ auteur n'existe pas ou n'est pas à mettre à jour
-            if (!isset($auteur_desc['field'][$champ]) || !isset($auteur_update[$champ]))
-                continue;
-
-            if (phpCAS::hasAttribute($attribute)) {
-                $auteur_update[$champ] .= " ".phpCAS::getAttribute($attribute);
-            } else {
-                $auteur_update[$champ] .= " ".$attribute;
-            }
-            $auteur_update[$champ] = trim($auteur_update[$champ]);
-        }
-
-        //Pousser les attributs CAS dans le profil auteur
-		$r = sql_updateq('spip_auteurs', $auteur_update, 'id_auteur ='.$auteur['id_auteur']);
-    }
-	
 	if (isset($auteur['id_auteur'])) {
 
 		// URL cible de l'operation de connexion
@@ -248,19 +186,17 @@ if ($ci_cas_userid=phpCAS::getUser()) {
 				}
 			}
 		}
+
+                // memorise ci_id_serveur_auth a cause des redirections
+                if ($ci_id_serveur_auth)
+		    $auteur['cicas_id_serveur'] = $ci_id_serveur_auth;
 		
 		// on a ete authentifie, construire la session
 		// en gerant la duree demandee pour son cookie 
-		if ($session_remember !== NULL)
-			$auteur['cookie'] = $session_remember;
+//		if ($session_remember !== NULL)
+//			$auteur['cookie'] = $session_remember;
 		$session = charger_fonction('session', 'inc');
 		$session($auteur);
-/*		
-		$p = ($auteur['prefs']) ? unserialize($auteur['prefs']) : array();
-		$p['cnx'] = ($session_remember == 'oui') ? 'perma' : '';
-		$p = array('prefs' => serialize($p));
-		sql_updateq('spip_auteurs', $p, "id_auteur=" . $auteur['id_auteur']);
-*/
 	
 		// Si on est admin, poser le cookie de correspondance
 		if (isset($auteur['statut'])) {
@@ -269,7 +205,7 @@ if ($ci_cas_userid=phpCAS::getUser()) {
 				spip_setcookie('spip_admin', '@'.$auteur['login'],time() + 7 * 24 * 3600);
 			}
 		}
-	
+		
 		// Si on est connecte, envoyer vers la destination
 		if ($cible)
 			$ciredirect = $cible;

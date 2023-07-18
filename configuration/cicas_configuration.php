@@ -102,7 +102,7 @@ function configuration_cicas_configuration()
 
 function cicas_afficher_choix($nom, $valeur_actuelle, $valeurs, $sep = "<br />", $disabled = false) {
 	$choix = array();
-	while (list($valeur, $titre) = each($valeurs)) {
+        foreach ($valeurs as $valeur => $titre) {
 		$choix[] = cicas_bouton_radio($nom, $valeur, $titre, $valeur == $valeur_actuelle, $disabled);
 	}
 	return "\n".join($sep, $choix);

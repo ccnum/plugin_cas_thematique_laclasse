@@ -1,0 +1,69 @@
+[(#SPIP_VERSION|>={3}|non)
+<div class='cadre cadre-formulaire-editer'>
+<div class="entete-formulaire">
+<h1><:cicas:eq_titre_mode_auth:></h1>
+</div>
+]
+
+<div class="formulaire_spip formulaire_configurer formulaire_demandes">
+[(#SPIP_VERSION|>={3}|oui)
+<h3 class='titrem'><:cicas:eq_titre_mode_auth:></h3>
+]
+	<!-- <br class='bugajaxie' /> -->
+	[<p class='reponse_formulaire reponse_formulaire_ok'>(#ENV**{message_ok})</p>]
+	[<p class='reponse_formulaire reponse_formulaire_erreur'>(#ENV*{message_erreur})</p>]
+	<form method='post' action='#ENV{action}' enctype='multipart/form-data'><div>
+		[(#REM) declarer les hidden qui declencheront le service du formulaire 
+		parametre : url d'action ]
+		#ACTION_FORMULAIRE{#ENV{action}}
+		
+		<input type='hidden' name='changer_config' value='oui' />
+		
+		<div class="cadre_padding"><p><:cicas:eq_avertissement:></p></div>
+		
+		#SET{cidisabled,''}
+		[(#ENV{ciedit}|non)#SET{cidisabled,'disabled="disabled"'}]
+		
+		#SET{name,mode_auth}#SET{erreurs,#ENV**{erreurs}|table_valeur{#GET{name}}}
+		<ul>
+			<li class="editer editer_[(#GET{name})][ (#GET{obli})][ (#GET{erreurs}|oui)erreur]" style="padding-left:15px;">
+				[<span class='erreur_message'>(#GET{erreurs})</span>]
+					<div class="choix">
+						<input type="radio" name="#GET{name}" id="#GET{name}_oui" value="oui"
+						[(#ENV{#GET{name}}|=={oui}|oui)checked="checked"] [(#GET{cidisabled})] />
+						<label for="#GET{name}_oui">
+						[(#ENV{#GET{name}}|=={oui}|oui)<b>]
+						<:cicas:eq_texte_auth_cas:>
+						[(#ENV{#GET{name}}|=={oui}|oui)</b>]
+						</label>
+					</div>
+					<div class="choix">
+						<input type="radio" name="#GET{name}" id="#GET{name}_hybride" value="hybride"
+						[(#ENV{#GET{name}}|=={hybride}|oui)checked="checked"] [(#GET{cidisabled})] />
+						<label for="#GET{name}_hybride">
+						[(#ENV{#GET{name}}|=={hybride}|oui)<b>]
+						<:cicas:eq_texte_auth_hybride:>
+						[(#ENV{#GET{name}}|=={hybride}|oui)</b>]
+						</label>
+					</div>
+					<div class="choix">
+						<input type="radio" name="#GET{name}" id="#GET{name}_non" value="non"
+						[(#ENV{#GET{name}}|=={non}|oui)checked="checked"] [(#GET{cidisabled})] />
+						<label for="#GET{name}_non">
+						[(#ENV{#GET{name}}|=={non}|oui)<b>]
+						<:cicas:eq_texte_auth_spip:>
+						[(#ENV{#GET{name}}|=={non}|oui)</b>]
+						</label>
+					</div>
+			</li>
+		</ul>
+
+	[(#ENV{ciedit}|oui)
+	  <p class='boutons'><input type='submit' class='submit' value='<:bouton_enregistrer:>' /></p>
+	]
+	</div></form>
+</div>
+
+[(#SPIP_VERSION|>={3}|non)
+</div>
+]

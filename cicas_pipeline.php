@@ -4,8 +4,6 @@
  * Copyright (c) Christophe IMBERTI
  * Licence Creative commons by-nc-sa
  */
- 
-
 
 /**
  * Pipeline d'aiguillage entre les modes d'authentification
@@ -14,37 +12,104 @@
  * @return $flux
  */
 function cicas_recuperer_fond($flux){
-	
-	if ($flux['args']['fond']=='formulaires/login'){
-		
-		include_spip('inc/cicas_commun');
-	
-		// lire la configuration du plugin
-		cicas_lire_meta();
+    
+    if ($flux['args']['fond']=='formulaires/login'){
+        
+        // ajout d'une securite anti BOT (via la constante _CICAS_ANTI_BOT)
+       	if (defined('_CICAS_ANTI_BOT') AND _CICAS_ANTI_BOT=='oui' AND _IS_BOT){
+            include_spip('inc/headers');
+            redirige_par_entete(generer_url_public('403'));
+            
+        } else {    
+            include_spip('inc/cicas_commun');
 
-		// authentification CAS
-		if ($GLOBALS['ciconfig']['cicas']=='oui' AND $GLOBALS['ciconfig']['cicasurldefaut']) {
-			include_spip('inc/cicas_login');
+            // lire la configuration du plugin
+            $tableau_config = cicas_lire_meta();
 
-		// authentification hybride CAS et SPIP
-		} elseif ($GLOBALS['ciconfig']['cicas']=='hybride') {
-			
-			// authentification CAS demandee par un clic sur le lien
-			if (_request('cicas') AND _request('cicas')=='oui') {
-				include_spip('inc/cicas_login');
+            // authentification CAS
+            if ($tableau_config['cicas']=='oui' AND $tableau_config['cicasurldefaut']) {
 
-			} else {
-				// ajout du lien vers l'authentification CAS
-				include_spip("inc/utils");
-				$lien = parametre_url(self(), 'cicas', 'oui');
-				$lien = '<a href="'.$lien.'"><img alt="'._T('cicas:eq_lien_auth_hybride').'" src="'.find_in_path('cicas.gif').'" /></a>'
-				.'&nbsp;<a href="'.$lien.'" style="vertical-align:top;">&#91;'._T('cicas:eq_lien_auth_hybride').'&#93;</a>';
-				$flux['data']['texte'] = str_replace('</form>','</form>'.$lien,$flux['data']['texte']);
-			}
-		}
+                    if (cicas_nombre_serveurs_additionnels()>=1 AND !_request('cicas')){
+
+                            // l'utilisateur a memorise son choix
+                            if (isset($_COOKIE['cicas_choix']) AND $_COOKIE['cicas_choix'] 
+                                    AND ($_COOKIE['cicas_choix']=='oui' OR intval($_COOKIE['cicas_choix'])>=1)){
+
+                                    $_GET['cicas'] = $_COOKIE['cicas_choix'];
+                                    include_spip('inc/cicas_login');
+
+                            } else {						
+                                    include_spip('inc/headers');
+                                    $arg = array();
+                                    if (_request('url'))
+                                            $arg['url'] = _request('url');
+                                    $ciredirect = generer_url_public('cicas_multi',$arg);
+                                    $ciredirect = str_replace('&amp;','&',$ciredirect); // les redirections se font en &, pas en en &amp;
+                                    redirige_par_entete($ciredirect);
+                            }
+                    } else {
+                            include_spip('inc/cicas_login');
+                    }
+
+            // authentification hybride CAS et SPIP
+            } elseif ($tableau_config['cicas']=='hybride') {
+
+                    // authentification CAS demandee par un clic sur le lien
+                    if (_request('cicas')) {
+                            include_spip('inc/cicas_login');
+
+                    } else {			
+                            // ajout du lien vers l'authentification CAS
+                            include_spip("inc/utils");
+                            $return	= '';
+                            $self = self();
+                            $cistyle = "vertical-align:top;";
+                            if (spip_version()>=4){
+                                $cistyle .= "color:#000;";
+                            }
+
+                            if (cicas_nombre_serveurs_additionnels()>=1){
+
+                                    // l'utilisateur a memorise son choix
+                                    if (isset($_COOKIE['cicas_choix']) AND $_COOKIE['cicas_choix'] 
+                                            AND ($_COOKIE['cicas_choix']=='oui' OR intval($_COOKIE['cicas_choix'])>=1)){
+
+                                            $lien = parametre_url($self, 'cicas', $_COOKIE['cicas_choix']);
+                                            $return = '<a href="'.$lien.'"><img alt="'._T('cicas:eq_lien_auth_hybride').'" src="'.find_in_path('cicas.gif').'" /></a>'
+                                            .'&nbsp;<a href="'.$lien.'" style="'.$cistyle.'">&#91;'._T('cicas:eq_lien_auth_hybride').'&#93;</a>';
+
+                                    } else {
+                                            $titre = '<div>'._T('cicas:choix_serveur').'</div>';
+
+                                            $lien = parametre_url($self, 'cicas', 'oui');
+                                            $return .= '<li><a href="'.$lien.'"><img alt="'._T('cicas:eq_lien_auth_hybride').'" src="'.find_in_path('cicas.gif').'" /></a>'
+                                            .'&nbsp;<a href="'.$lien.'" style="'.$cistyle.'">&#91;'.$tableau_config['cicasurldefaut'].'&#93;</a>
+                                            &nbsp;<a href="'.$lien.'&memoriser=oui" style="'.$cistyle.'">'._T('cicas:memoriser_choix').'</a></li>';
+
+                                            // serveurs additionnels
+                                            $serveurs = cicas_lire_serveurs_additionnels();	
+                                            foreach ($serveurs as $id_serveur=>$serveur){
+                                                    $lien = parametre_url($self, 'cicas', intval($id_serveur));		
+                                                    $return .= '<li><a href="'.$lien.'"><img alt="'._T('cicas:eq_lien_auth_hybride').'" src="'.find_in_path('cicas.gif').'" /></a>'
+                                                    .'&nbsp;<a href="'.$lien.'" style="'.$cistyle.'">&#91;'.$serveur['cicasurldefaut'].'&#93;</a>		
+                                                    &nbsp;<a href="'.$lien.'&memoriser=oui" style="'.$cistyle.'">'._T('cicas:memoriser_choix').'</a></li>';
+                                            }
+
+                                            $return = $titre.'<ul style="text-align:left;padding:0;">'.$return.'</ul>';
+                                    }
+
+                            } else {
+                                    $lien = parametre_url($self, 'cicas', 'oui');
+                                    $return = '<a href="'.$lien.'"><img alt="'._T('cicas:eq_lien_auth_hybride').'" src="'.find_in_path('cicas.gif').'" /></a>'
+                                    .'&nbsp;<a href="'.$lien.'" style="'.$cistyle.'">&#91;'._T('cicas:eq_lien_auth_hybride').'&#93;</a>';
+                            }
+                            $flux['data']['texte'] = str_replace('</form>','</form>'.$return,$flux['data']['texte']);
+                    }
+            }
 	}
+    }
 	
-	return $flux;
+    return $flux;
 }
 
 
@@ -69,15 +134,18 @@ function cicas_pre_edition($tableau){
 					
 					if ($tableau['args']['action']=='modifier'){
 						include_spip('inc/cicas_commun');
-						cicas_lire_meta();
+						
+						// Lire la configuration du plugin pour la session
+						$tableau_config = cicas_lire_meta(0,false,true);
+
 		    			$mon_id_auteur = (isset($GLOBALS['visiteur_session']['id_auteur']) ? $GLOBALS['visiteur_session']['id_auteur'] : '');
 	
 						// modifier un autre auteur
 		    			if ($id_auteur!=$mon_id_auteur) {
 		    				
-							if ($GLOBALS['ciconfig']['cicasuid']=="login"){
-								$old_login = $row['login'];
-								$new_login = strtolower((isset($tableau['data']['login']) ? $tableau['data']['login'] : ''));
+                                                if ($tableau_config['cicasuid']=="login"){
+                                                        $old_login = $row['login'];
+                                                        $new_login = strtolower((isset($tableau['data']['login']) ? $tableau['data']['login'] : ''));
 	
 				    			// modifier l'identifiant SSO (login) d'un autre auteur
 					    		if ($new_login!=$old_login){
@@ -96,12 +164,12 @@ function cicas_pre_edition($tableau){
 				    					$tableau['data']['login'] = $old_login;
 					    		}
 							
-							} else {
-								$old_email = $row['email'];
-								$new_email = strtolower((isset($tableau['data']['email']) ? $tableau['data']['email'] : ''));
+                                                } else {
+                                                        $old_email = $row['email'];
+                                                        $new_email = strtolower((isset($tableau['data']['email']) ? $tableau['data']['email'] : ''));
 				    			
 				    			// modifier l'identifiant SSO (email) d'un autre auteur
-					    		if ($new_email!=$old_email){
+					    		if ($new_email AND $new_email!=$old_email){
 		
 									$mes_emails = array();
 									if (isset($GLOBALS['visiteur_session']['email']) AND trim($GLOBALS['visiteur_session']['email']))
@@ -127,9 +195,9 @@ function cicas_pre_edition($tableau){
 										$cicasmailcompatible = array('equipement.gouv.fr' => 'developpement-durable.gouv.fr');
 										
 										// compatibilite figurant dans le fichier de parametrage config/_config_cas.php
-										if (isset($GLOBALS['ciconfig']['cicasmailcompatible'])) {
-											if (is_array($GLOBALS['ciconfig']['cicasmailcompatible'])) {
-												$cicasmailcompatible = $GLOBALS['ciconfig']['cicasmailcompatible'];
+										if (isset($tableau_config['cicasmailcompatible'])) {
+											if (is_array($tableau_config['cicasmailcompatible'])) {
+												$cicasmailcompatible = $tableau_config['cicasmailcompatible'];
 											}
 										}
 										
@@ -158,7 +226,7 @@ function cicas_pre_edition($tableau){
 			    		} else {
 			    			// se modifier soi meme
 			    			$memo = '';
-							if ($GLOBALS['ciconfig']['cicasuid']=="login"){
+							if ($tableau_config['cicasuid']=="login"){
 								$old_login = $row['login'];
 								$new_login = strtolower((isset($tableau['data']['login']) ? $tableau['data']['login'] : ''));
 	
@@ -263,7 +331,7 @@ function cicas_fichier_memo(){
 	if (defined('_CICAS_REPERTOIRE') AND _CICAS_REPERTOIRE){
 		$repertoire = _CICAS_REPERTOIRE;
 		// securite
-	    if ((strpos($repertoire,'../') === false)
+                if ((strpos($repertoire,'../') === false)
 			AND !(preg_match(',^\w+://,', $repertoire))) {
 		
 			if (substr($repertoire, 0, 1)=="/")
@@ -290,10 +358,16 @@ function cicas_unicite_email($new_email,$id_auteur){
 			$return = false;
 
 		if ($return){
+			// compatibilite par defaut
+			$cicasmailcompatible = array('equipement.gouv.fr' => 'developpement-durable.gouv.fr');
+                        
+			// Lire la configuration du plugin pour la session
+			$tableau_config = cicas_lire_meta(0,false,true);
+			
 			// compatibilite figurant dans le fichier de parametrage config/_config_cas.php
-			if (isset($GLOBALS['ciconfig']['cicasmailcompatible'])) {
-				if (is_array($GLOBALS['ciconfig']['cicasmailcompatible'])) {
-					$cicasmailcompatible = $GLOBALS['ciconfig']['cicasmailcompatible'];
+			if (isset($tableau_config['cicasmailcompatible'])) {
+				if (is_array($tableau_config['cicasmailcompatible'])) {
+					$cicasmailcompatible = $tableau_config['cicasmailcompatible'];
 				}
 			}
 			
@@ -310,6 +384,53 @@ function cicas_unicite_email($new_email,$id_auteur){
 		}
 	}
 	return $return;
+}
+
+
+function cicas_formulaire_verifier($flux) {
+        // Un rédacteur ou un admin restreint ne doit pas pouvoir modifier son propre email
+        // si CICAS utilise l'email comme identifiant
+        // or SPIP 4.0 le permet
+        // Remarque : id_auteur figure dans $flux['args']['args'][0]
+        if ($GLOBALS['spip_version_branche']>=4) {
+                if (isset($flux['args']['form']) 
+                        AND $flux['args']['form']=='editer_auteur' 
+                        AND isset($flux['args']['args'][0]) 
+                        AND $flux['args']['args'][0]){
+
+                        if (isset($GLOBALS['visiteur_session']['id_auteur']) 
+                                AND $GLOBALS['visiteur_session']['id_auteur']==$flux['args']['args'][0] 
+                                AND isset($GLOBALS['visiteur_session']['statut'])){
+
+                                if ($GLOBALS['visiteur_session']['statut'] == '1comite' 
+                                        OR ($GLOBALS['visiteur_session']['statut'] == '0minirezo' AND liste_rubriques_auteur($GLOBALS['visiteur_session']['id_auteur'])) ){
+
+                                        // email modifié ?
+                                        $old_email = '';
+                                        $new_email = _request('email');
+                                        $row = sql_fetsel("email", "spip_auteurs", "id_auteur=".intval($flux['args']['args'][0]));
+                                        if ($row) {
+                                                $old_email = $row['email'];
+                                        }
+
+                                        if ($new_email!=$old_email){
+                                                // Si CICAS utilise l'email comme identifiant
+                                                include_spip('inc/cicas_commun');
+                                                $tableau_config = cicas_lire_meta(0,false,true);
+
+                                                if (!isset($tableau_config['cicasuid']) 
+                                                        OR $tableau_config['cicasuid']==""  
+                                                        OR $tableau_config['cicasuid']=="email") {
+
+                                                        $flux['data'] = array('email'=>_T('cicas:email_non_modifiable'));
+                                                }
+                                        }
+                                }
+                        }
+                }
+        }
+        
+        return $flux;
 }
 
 ?>

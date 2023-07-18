@@ -1,0 +1,43 @@
+#CACHE{0}
+#FILTRE{compacte_head}
+[(#REM)
+	Eviter les boutons d'admin sur la page de login
+]
+#HTTP_HEADER{Content-Type: text/html; charset=#CHARSET}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="#LANG" lang="#LANG" dir="#LANG_DIR">
+<head>
+<title>[(#NOM_SITE_SPIP|textebrut)]</title>
+<meta http-equiv="Content-Type" content="text/html; charset=#CHARSET" />
+<meta name="robots" content="none" />
+<meta name="generator" content="SPIP[ (#SPIP_VERSION)]" />
+[<link rel="shortcut icon" href="(#CHEMIN{favicon.ico})" />]
+<link rel="stylesheet" href="[(#CHEMIN{spip_style.css}|direction_css)]" type="text/css" />
+<link rel="stylesheet" href="[(#CHEMIN{minipres.css}|direction_css)]" type="text/css" />
+</head>
+<body class="page_login" >
+
+<div id="minipres">
+
+	<h1>#NOM_SITE_SPIP</h1>
+	
+	[(#REM)
+		Est-ce qu'on se connecte a l'espace prive ou pas ?
+	]
+	[(#ENV{url}|=={''}|?{#SET{prive,' '}})]
+	[(#ENV{url}|match{^#EVAL{_DIR_RESTREINT_ABS}}|?{#SET{prive,' '}})]
+	[(#GET{prive}) <h3 class="spip"><:login_acces_prive:></h3>]
+	
+	<div class="formulaire_spip formulaire_login">	
+	<div><:cicas:choix_serveur:></div>
+	[(#SPIP_VERSION|cicas_liens_serveurs)]
+	</div>	
+
+	<p class="retour">
+		&#91;<a href="#URL_SITE_SPIP/"><:login_retoursitepublic:></a>&#93;
+	</p>
+	
+</div><!--#minipres-->
+
+</body>
+</html>

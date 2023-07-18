@@ -1,0 +1,13 @@
+<div class='cadre-formulaire-editer'>
+<div class="entete-formulaire">
+[(#SPIP_VERSION|>={3}|oui)
+	[(#URL_ECRIRE{cicas_serveurs}|cicas_icone_verticale{<:icone_retour:>,rubrique,'',left retour[(#ENV{retourajax,''}|oui)ajax preload]})]
+]
+[(#SPIP_VERSION|>={3}|non)
+	#ENV**{icone_retour}
+]
+
+<h1><:cicas:serveur:></h1>
+</div>
+#FORMULAIRE_CICAS_SERVEUR{#ENV{new}}
+</div>

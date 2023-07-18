@@ -21,6 +21,27 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 'eq_texte_erreur2' => 'You have been authenticated by the CAS server, but your e-mail address (or your login) has not been found in SPIP. Please contact the webmaster of the site.',
 'titre' => "CAS management (SSO)",
 'cicas_titre' => "CAS management (SSO)",
+'serveur' => 'Additional CAS server',
+'serveurs' => 'Additional CAS servers',
+'auteurs' => 'Automatic creation of author',
+'email' => 'email',
+'login' => 'login',
+"eq_texte_creer_auteur" => 'If authentication on the CAS server succeeded and the author does not exist in SPIP , should create the author automatically ?',
+"pas_creer_auteur" => 'Do not create the author',
+"creer_redacteur" => 'Create the author with writer status',
+"creer_visiteur" => 'Create the author with visitor status',
+'supprimer_serveur_cas' => 'Delete this additional server',
+'titre_creer_serveur' => 'Add Server',
+'info_serveurs' => 'It is possible to add additional CAS servers. If authentication on the CAS server fails , the plugin will try authentication on the first additional CAS server ( if it also fails, the plugin will try authentication on the second additional CAS server , etc.).',
+'aucun_serveur' => 'No additional server has been created.',
+'aucun_serveur_fichier_param' => 'No additional server listed in the configuration file.',
+'erreur_obligatoire' => 'Required information',
+'erreur_int' => 'The value must be a number.',
+'erreur_incorrect' => 'Incorrect value.',
+'choix_serveur' => 'You can authenticate with one of the following authentication servers (if you do not know which one to choose , click first on the first) :',
+'memoriser_choix'=>'Remember this choice',
+'email_non_modifiable'=>'You are not authorized to modify your email',
+
 );
 
 ?>

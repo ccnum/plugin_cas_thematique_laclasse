@@ -1,0 +1,105 @@
+[(#ENV{id_serveur}|=={initial}|oui)
+[(#SPIP_VERSION|>={3}|non)
+<div class='cadre cadre-formulaire-editer'>
+<div class="entete-formulaire">
+<h1><:cicas:eq_titre_serveur_cas:></h1>
+</div>
+]
+
+<div class="formulaire_spip formulaire_configurer formulaire_demandes">
+[(#SPIP_VERSION|>={3}|oui)
+<h3 class='titrem'><:cicas:eq_titre_serveur_cas:></h3>
+]
+]
+
+[(#ENV{id_serveur}|=={initial}|non)
+<div class='formulaire_spip formulaire_editer'>
+]
+	<!-- <br class='bugajaxie' /> -->
+	[<p class='reponse_formulaire reponse_formulaire_ok'>(#ENV**{message_ok})</p>]
+	[<p class='reponse_formulaire reponse_formulaire_erreur'>(#ENV*{message_erreur})</p>]
+	<form method='post' action='#ENV{action}' enctype='multipart/form-data'><div>
+		[(#REM) declarer les hidden qui declencheront le service du formulaire 
+		parametre : url d'action ]
+		#ACTION_FORMULAIRE{#ENV{action}}
+	  <input type='hidden' name='id_serveur' value='#ENV{id_serveur}' />
+	  
+	  #SET{disabled,''}
+	  [(#ENV{ciedit}|non)
+		  #SET{disabled,disabled='disabled'}
+	  ]
+	  
+        <ul>
+                #SET{name,cicasurldefaut}#SET{erreurs,#ENV**{erreurs}|table_valeur{#GET{name}}}
+            <li class='editer_[(#GET{name})] [ (#ENV**{erreurs}|table_valeur{[(#GET{name})]}|oui)erreur] editer_type_input'>
+                        <label for='[(#GET{name})]'><:cicas:eq_texte_url:></label>
+                        [<span class='erreur_message'>(#ENV**{erreurs}|table_valeur{[(#GET{name})]})</span>]
+                        <input type='text' class='text' name='[(#GET{name})]' id='[(#GET{name})]' value='[(#ENV{[(#GET{name})]})]' [(#GET{disabled})]/>
+            </li>
+
+                #SET{name,cicasrepertoire}#SET{erreurs,#ENV**{erreurs}|table_valeur{#GET{name}}}
+            <li class='editer_[(#GET{name})] [ (#ENV**{erreurs}|table_valeur{[(#GET{name})]}|oui)erreur] editer_type_input'>
+                        <label for='[(#GET{name})]'><:cicas:eq_texte_repertoire:></label>
+                        [<span class='erreur_message'>(#ENV**{erreurs}|table_valeur{[(#GET{name})]})</span>]
+                        <input type='text' class='text' name='[(#GET{name})]' id='[(#GET{name})]' value='[(#ENV{[(#GET{name})]})]' [(#GET{disabled})]/>
+            </li>
+
+                #SET{name,cicasport}#SET{erreurs,#ENV**{erreurs}|table_valeur{#GET{name}}}
+            <li class='editer_[(#GET{name})] [ (#ENV**{erreurs}|table_valeur{[(#GET{name})]}|oui)erreur] editer_type_input'>
+                        <label for='[(#GET{name})]'><:cicas:eq_texte_port:></label>
+                        [<span class='erreur_message'>(#ENV**{erreurs}|table_valeur{[(#GET{name})]})</span>]
+                        <input type='text' class='text' name='[(#GET{name})]' id='[(#GET{name})]' value='[(#ENV{[(#GET{name})]})]' [(#GET{disabled})]/>
+            </li>
+
+                #SET{name,cicasuid}#SET{erreurs,#ENV**{erreurs}|table_valeur{#GET{name}}}
+            <li>
+                        <label for="[(#GET{name})]"><:cicas:eq_texte_uid:></label>
+                        [<span class='erreur_message'>(#ENV**{erreurs}|table_valeur{[(#GET{name})]})</span>]
+                        <select name="[(#GET{name})]" id="[(#GET{name})]" [(#GET{disabled})]>
+                                <option value="email" [(#ENV{[(#GET{name})]}|=={email}|oui)selected="selected"]><:cicas:email:></option>
+                                <option value="login" [(#ENV{[(#GET{name})]}|=={login}|oui)selected="selected"]><:cicas:login:></option>
+                        </select>
+            </li>
+
+                #SET{name,cicas_creer_auteur}#SET{erreurs,#ENV**{erreurs}|table_valeur{#GET{name}}}
+            <li>
+                        <label for="[(#GET{name})]"><:cicas:eq_texte_creer_auteur:></label>
+                        [<span class='erreur_message'>(#ENV**{erreurs}|table_valeur{[(#GET{name})]})</span>]
+                        <select name="[(#GET{name})]" id="[(#GET{name})]" [(#GET{disabled})]>
+                                <option value="" [(#ENV{[(#GET{name})]}|non)selected="selected"]><:cicas:pas_creer_auteur:></option>
+                                <option value="1comite" [(#ENV{[(#GET{name})]}|=={1comite}|oui)selected="selected"]><:cicas:creer_redacteur:></option>
+                                <option value="6forum" [(#ENV{[(#GET{name})]}|=={6forum}|oui)selected="selected"]><:cicas:creer_visiteur:></option>
+                        </select>
+            </li>
+
+        </ul>
+	  
+	[(#ENV{ciedit}|oui)
+	  <p class='boutons'><input type='submit' class='submit' value='<:bouton_enregistrer:>' /></p>
+	]
+	</div></form>	
+</div>
+
+[(#ENV{id_serveur}|=={initial}|non)
+
+[(#ENV{ciedit}|oui)
+<div>
+[(#SPIP_VERSION|>={3}|oui)	
+[(#URL_ACTION_AUTEUR{supprimer_serveur_cas,#ENV{id_serveur},#URL_ECRIRE{cicas_serveurs}}|icone_horizontale{<:cicas:supprimer_serveur_cas:>,groupe_mots,del})]
+]
+
+[(#SPIP_VERSION|>={3}|non)	
+<a href="[(#URL_ACTION_AUTEUR{supprimer_serveur_cas,#ENV{id_serveur},#URL_ECRIRE{cicas_serveurs}})]" class="icone36 danger groupe-mot-24" style="float: left;"><img height="24" width="24" style="background: url('../prive/images/groupe-mot-24.gif') no-repeat scroll center center transparent;" alt="<:cicas:supprimer_serveur_cas:>" src="../prive/images/supprimer.gif"><span><:cicas:supprimer_serveur_cas:></span></a>
+]
+</div>
+<div style='clear:both;'></div>	
+]
+<br />	
+
+]
+
+[(#ENV{id_serveur}|=={initial}|oui)
+[(#SPIP_VERSION|>={3}|non)
+</div>
+]
+]

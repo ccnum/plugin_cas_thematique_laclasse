@@ -1,105 +1,117 @@
 <?php
 
 /***************************************************************************\
- *  SPIP, Systeme de publication pour l'internet                           *
+ *  SPIP, Système de publication pour l'internet                           *
  *                                                                         *
- *  Copyright (c) 2001-2013                                                *
- *  Arnaud Martin, Antoine Pitrou, Philippe Riviere, Emmanuel Saint-James  *
+ *  Copyright © avec tendresse depuis 2001                                 *
+ *  Arnaud Martin, Antoine Pitrou, Philippe Rivière, Emmanuel Saint-James  *
  *                                                                         *
- *  Ce programme est un logiciel libre distribue sous licence GNU/GPL.     *
- *  Pour plus de details voir le fichier COPYING.txt ou l'aide en ligne.   *
+ *  Ce programme est un logiciel libre distribué sous licence GNU/GPL.     *
+ *  Pour plus de détails voir le fichier COPYING.txt ou l'aide en ligne.   *
 \***************************************************************************/
 
-if (!defined('_ECRIRE_INC_VERSION')) return;
+/**
+ * Action pour déconnecter une personne authentifiée
+ *
+ * @package SPIP\Core\Authentification
+ */
+
+if (!defined('_ECRIRE_INC_VERSION')) {
+	return;
+}
 
 include_spip('inc/cookie');
-include_spip('public/aiguiller');
 
 /**
- * Se deloger
- * Pour eviter les CSRF on passe par une etape de confirmation si pas de jeton,
- * avec un autosubmit js pour ne pas compliquer l'experience utilisateur
+ * Se déloger
  *
- * http://doc.spip.org/@action_logout_dist
+ * Pour éviter les CSRF on passe par une étape de confirmation si pas de jeton fourni
+ * avec un autosubmit js pour ne pas compliquer l'expérience utilisateur
+ *
+ * Déconnecte l'utilisateur en cours et le redirige sur l'URL indiquée par
+ * l'argument de l'action sécurisée, et sinon sur la page d'accueil
+ * de l'espace public.
  *
  */
-function action_logout_dist()
-{
-	$logout =_request('logout');
-	$url = _request('url');
-	
+function action_logout_dist() {
+	$logout = _request('logout');
+	$url = securiser_redirect_action(_request('url'));
+	// cas particulier, logout dans l'espace public
+	if ($logout == 'public' and !$url) {
+		$url = url_de_base();
+	}
+
 //------- Debut ajout CI -----
 	include_spip('inc/cicas_commun');
-	include_spip('inc/config');
 
-	//Quel serveur CAS
-		$id_ent = 0;
-
-		if ($GLOBALS['visiteur_session']['ent'] !== '')
-		{
-
-			$tableau = array();
-			$tableau = @unserialize($GLOBALS['meta']['cicas']);
-
-			for ($j = 1; $j <= lire_config('cicas/server_nb',1); $j++) 
-			{			
-				// test
-				//if ($j > 1) $dom = $tableau['config'.$j]['cicasurldefaut']; else $dom = $tableau['cicasurldefaut'];
-				if ($j == 1) $attributes = lire_config('cicas/attributes'); else $attributes = lire_config('cicas/config'.$j.'/attributes');
-				foreach($attributes as $attribute => $champ) { if ($champ=='ent') $dom = $attribute; }
-
-				error_log($dom.":".$GLOBALS['visiteur_session']['ent']."\n", 3, LOG_PATH);
-
-				//S'agit il du même domaine
-				if 	($dom == $GLOBALS['visiteur_session']['ent']) 
-				{
-					$id_ent = $j;
-					break;
-				}
-			}
-		}
-
-	//Soit par index de l'ent
-		if (isset($_GET['ent'])&&(is_numeric($_GET['ent']))&&($_GET['ent']>0))
-		{
-			$id_ent=$_GET['ent'];
-		}
-
-	//$id
-		if ($id_ent==0) $id_ent=1;
-	   	error_log($id_ent."\n", 3, LOG_PATH);
-
-	// lire la configuration du plugin
-		cicas_lire_meta($id_ent);
+	// Lire la configuration du plugin pour la session
+	$tableau_config = cicas_lire_meta(0,false,true);
 	
 	$ciauthcas= false;
-	if ($GLOBALS['ciconfig']['cicas']=="oui" OR isset($_COOKIE['cicas_sso'])) {
-		if ($GLOBALS['ciconfig']['cicasurldefaut'])
+	if ($tableau_config['cicas']=="oui" OR isset($_COOKIE['cicas_sso'])) {
+		if ($tableau_config['cicasurldefaut'])
 			$ciauthcas= true;
 	}
 //------- Fin ajout CI -----
-	
-	// seul le loge peut se deloger
-	// (mais id_auteur peut valoir 0 apres une restauration avortee)
-	if (isset($GLOBALS['visiteur_session']['id_auteur']) 
-	AND is_numeric($GLOBALS['visiteur_session']['id_auteur'])
-	// des sessions anonymes avec id_auteur=0 existent,
-	// mais elles n'ont pas de statut : verifier ca aussi
-	AND isset($GLOBALS['visiteur_session']['statut'])) {
-		// relancer si pas de jeton
-		if (!action_logout_secu($logout, $url, _request('jeton'))) {
-			return; // page submit retournee
-		} elseif (isset($_COOKIE['spip_session'])) {
+        
+	// seul le loge peut se deloger (mais id_auteur peut valoir 0 apres une restauration avortee)
+	if (
+		isset($GLOBALS['visiteur_session']['id_auteur'])
+		and is_numeric($GLOBALS['visiteur_session']['id_auteur'])
+		// des sessions anonymes avec id_auteur=0 existent, mais elle n'ont pas de statut : double check
+		and isset($GLOBALS['visiteur_session']['statut'])
+	) {
+		// il faut un jeton pour fermer la session (eviter les CSRF)
+		if (
+			!$jeton = _request('jeton')
+			or !verifier_jeton_logout($jeton, $GLOBALS['visiteur_session'])
+		) {
+			$jeton = generer_jeton_logout($GLOBALS['visiteur_session']);
+			$action = generer_url_action('logout', "jeton=$jeton");
+			$action = parametre_url($action, 'logout', _request('logout'));
+			$action = parametre_url($action, 'url', _request('url'));
+			include_spip('inc/minipres');
+			include_spip('inc/filtres');
+			$texte = bouton_action(_T('spip:icone_deconnecter'), $action);
+			$texte = "<div class='boutons'>$texte</div>";
+			$texte .= '<script type="text/javascript">document.write("<style>body{visibility:hidden;}</style>");window.document.forms[0].submit();</script>';
+			$res = minipres(_T('spip:icone_deconnecter'), $texte, ['all_inline' => true]);
+			echo $res;
+
+			return;
+		}
+
+		include_spip('inc/auth');
+		auth_trace($GLOBALS['visiteur_session'], '0000-00-00 00:00:00');
 		// le logout explicite vaut destruction de toutes les sessions
-			
+		if (isset($_COOKIE['spip_session'])) {
 			$session = charger_fonction('session', 'inc');
 			$session($GLOBALS['visiteur_session']['id_auteur']);
-			spip_setcookie('spip_session', $_COOKIE['spip_session'], time()-3600);
+			spip_setcookie('spip_session', $_COOKIE['spip_session'], [
+				'expires' => time() - 3600
+			]);
 		}
-		include_spip('inc/auth');
-		auth_trace($GLOBALS['visiteur_session'],'0000-00-00 00:00:00');
-		
+                
 //------- Debut ajout CI -----
+//
+		// si authentification http, et que la personne est loge,
+		// pour se deconnecter, il faut proposer un nouveau formulaire de connexion http
+/*                
+		if (
+			isset($_SERVER['PHP_AUTH_USER'])
+			and !$GLOBALS['ignore_auth_http']
+			and $GLOBALS['auth_can_disconnect']
+		) {
+			ask_php_auth(
+				_T('login_deconnexion_ok'),
+				_T('login_verifiez_navigateur'),
+				_T('login_retour_public'),
+				'redirect=' . _DIR_RESTREINT_ABS,
+				_T('login_test_navigateur'),
+				true
+			);
+		}
+*/                
 		if ($ciauthcas) {
 	
 			include_spip('inc/cicas_commun');
@@ -109,21 +121,21 @@ function action_logout_dist()
 			// Pour la solution hybride utilisation d'un cookie
 			if(isset($_COOKIE['cicas_sso']))
 				spip_setcookie('cicas_sso', '', time() - 3600);
-			
-			// Déterminer l'origine de l'appel (intranet, internet, ...)
+                        
+			// Determiner l'origine de l'appel (intranet, internet, ...)
 			// .i2 ou .ader.gouv.fr ou .gouv.fr ou .agri
-			$ciurlcas=cicas_url_serveur_cas();	
-		
+			$ciurlcas=cicas_url_serveur_cas(0,false,true);	
+	
 			// initialize phpCAS
 			$cirep='';
-			$ciport=intval($GLOBALS['ciconfig']['cicasport']);
-			if (isset($GLOBALS['ciconfig']['cicasrepertoire'])) $cirep=$GLOBALS['ciconfig']['cicasrepertoire'];
+			$ciport=intval($tableau_config['cicasport']);
+			if (isset($tableau_config['cicasrepertoire'])) $cirep=$tableau_config['cicasrepertoire'];
 			
 			phpCAS::client(CAS_VERSION_2_0,$ciurlcas,$ciport,$cirep);
 			
-			phpCAS::setLang(cicas_lang_phpcas($_GET['lang']));
+			phpCAS::setLang(cicas_lang_phpcas());
 	
-			// Déterminer l'url retour
+			// Determiner l'url retour
 			$ci_url_retour = cicas_url_retour($url);
 			
 			// deconnexion de CAS avec l'url retour	
@@ -131,93 +143,69 @@ function action_logout_dist()
 			
 		}
 //------- Fin ajout CI -----
-		
 	}
-	
+
 //------- Debut ajout CI -----
 	if (!$ciauthcas) {
 //------- Fin ajout CI -----	
-		// Action terminee (ou non faite si pas les droits) on redirige.
-		// Cas particulier, logout dans l'espace public
-		$url = securiser_redirect_action($url);
-		if ($logout == 'public' AND !$url)
-			$url = url_de_base();
-		include_spip('inc/headers');
-		redirige_par_entete($url
-			// contrer le cache navigateur (Safari3)
-			? parametre_url($url, 'var_hasard', uniqid(rand()), '&')
-			: generer_url_public('login'));
+        
+	// Rediriger en contrant le cache navigateur (Safari3)
+	include_spip('inc/headers');
+//------- Debut ajout CI -----
+/*
+	redirige_par_entete($url
+		? parametre_url($url, 'var_hasard', uniqid(random_int(0, mt_getrandmax())), '&')
+		: generer_url_public('login'));
+*/
+	redirige_par_entete($url
+		? parametre_url($url, 'var_hasard', uniqid(rand()), '&')
+		: generer_url_public('login'));
+//------- Fin ajout CI -----			
+
 //------- Debut ajout CI -----
 	}
 //------- Fin ajout CI -----			
 }
 
 /**
- * Verifier un jeton si present, ou envoyer une page le produisant
- * @param string $logout
- * @param string $url
- * @param string $jeton
- * @return boolean
- */
-
-function action_logout_secu($logout, $url, $jeton)
-{
-	if ($jeton AND verifier_jeton_logout($jeton,$GLOBALS['visiteur_session']))
-		return true;
-	$jeton = generer_jeton_logout($GLOBALS['visiteur_session']);
-	$action = generer_url_action("logout","jeton=$jeton");
-	$action = parametre_url($action,'logout',$logout);
-	$action = parametre_url($action,'url',$url);
-	include_spip("inc/minipres");
-	include_spip("inc/filtres");
-	$texte = bouton_action(_T('spip:icone_deconnecter'),$action);
-	$texte = "<div class='boutons'>$texte</div>";
-	$texte .= '<script type="text/javascript">document.write("<style>body{visibility:hidden;}</style>");window.document.forms[0].submit();</script>';
-	echo minipres(_T('spip:icone_deconnecter'),$texte,'',true);
-	return false;
-}
-
-/**
  * Generer un jeton de logout personnel et ephemere
+ *
  * @param array $session
  * @param null|string $alea
  * @return string
  */
-function generer_jeton_logout($session,$alea=null){
-	if (is_null($alea)){
-		if (!isset($GLOBALS['meta']['alea_ephemere'])){
-			include_spip('base/abstract_sql');
-			$GLOBALS['meta']['alea_ephemere'] = sql_getfetsel('valeur', 'spip_meta', "nom='alea_ephemere'");
-		}
-		$alea = $GLOBALS['meta']['alea_ephemere'];
+function generer_jeton_logout($session, $alea = null) {
+	if (is_null($alea)) {
+		include_spip('inc/acces');
+		$alea = charger_aleas();
 	}
 
 	$jeton = md5($session['date_session']
-	  .$session['id_auteur']
-	  .$session['statut']
-	  .$alea
-	);
+		. $session['id_auteur']
+		. $session['statut']
+		. $alea);
+
 	return $jeton;
 }
 
 /**
  * Verifier que le jeton de logout est bon
- * il faut verifier avec alea_ephemere_ancien si pas bon avec alea_ephemere
+ *
+ * Il faut verifier avec alea_ephemere_ancien si pas bon avec alea_ephemere
  * pour gerer le cas de la rotation d'alea
+ *
  * @param string $jeton
  * @param array $session
  * @return bool
  */
-function verifier_jeton_logout($jeton,$session){
-	if (generer_jeton_logout($session)===$jeton)
+function verifier_jeton_logout($jeton, $session) {
+	if (generer_jeton_logout($session) === $jeton) {
 		return true;
-	if (!isset($GLOBALS['meta']['alea_ephemere_ancien'])){
-		include_spip('base/abstract_sql');
-		$GLOBALS['meta']['alea_ephemere_ancien'] = sql_getfetsel('valeur', 'spip_meta', "nom='alea_ephemere_ancien'");
 	}
-	if (generer_jeton_logout($session,$GLOBALS['meta']['alea_ephemere_ancien'])===$jeton)
+
+	if (generer_jeton_logout($session, $GLOBALS['meta']['alea_ephemere_ancien']) === $jeton) {
 		return true;
+	}
+
 	return false;
 }
-
-?>
