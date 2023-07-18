@@ -35,5 +35,5 @@ http://localhost/nouvelle_ccn/ecrire/
 ## CAS
 
 git clone --branch cicas-spip4 https://github.com/ccnum/plugin_cas_thematique_laclasse.git /var/www/html/nouvelle_ccn/plugins/CAS/
-git clone git@github.com:freeCodeCamp/freeCodeCamp.git
+
 ## Modules compémentaires
