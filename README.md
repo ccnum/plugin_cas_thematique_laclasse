@@ -5,8 +5,11 @@ https://contrib.spip.net/cicas-plugin-d-authentification-avec-CAS-pour-SPIP
 #  before spip
 
 ## dependancies
-install php-xml php-zip git
-restart apache
+apt update
+install php-xml php-zip git wget unzip libzip-dev
+docker-php-ext-install mysqli zip pdo_mysql
+a2enmod rewrite && /etc/init.d/apache2 reload
+
 
 ## database
 apt install mariadb-server
@@ -21,7 +24,7 @@ cd /var/www/html/nouvelle_ccn
 wget https://files.spip.net/spip/archives/spip-v4.2.4.zip
 unzip spip-v4.2.4.zip
 rm spip-v4.2.4.zip
-sudo chmod -R 777 IMG tmp local config
+chmod -R 777 IMG tmp local config
 mv htaccess.txt .htaccess
 http://localhost/nouvelle_ccn/ecrire/
 
