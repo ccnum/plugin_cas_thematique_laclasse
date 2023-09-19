@@ -99,8 +99,28 @@ function cicas_recuperer_fond($flux){
                                     }
 
                             } else {
+                                /*
+                                 * C'est ici qu'est géré notre lien vers laclasse.com
+                                 *
+1- Utilisateur non authentifié est redirigé vers le SSO laclasse.com avec pour paramètre la destination dans une variable GET nommée service.
+2- L'utilisateur se connecté et est redirigé vers cette URL avec le ticket en paramètre GET
+3- Le serveur valide la validité de ce ticket sur www.laclasse.com/sso/serviceValidate avec le ticket en paramètre GET et le service envoyé dans l'étape 1.
+4- Le SSO renvoie en réponse un fichier XML contenant les informations telles que définies dans le client CAS coté laclasse.com ou un message d'erreur. Il est possible d'avoir la réponse par l'attribut XML cas:authenticationSuccess si c'est bon ou cas:authenticationFailure dans le cas contraire.
+5- Le serveur peut considérer que l'utilisateur est authentifié et le provisionne à partir des informations qui sont renvoyé dans le fichier XML.
+
+                                 */
+
+                                /*
+                                 * Le lien vers le CAS laclasse.com est une image clicable puis du texte clicable. Les
+                                 * deux pointant vers la même url.
+                                 * https://www.laclasse.com/sso/login?service=https%3A%2F%2Ftraefik-ingress-controller-kjqnv%2Fspip.php%3Fpage%3Dlogin%26url%3D%252Fecrire%252F%26cicas%3Doui
+                                 * exemple : https://www.laclasse.com/sso/login?service=bd.laclasse.com%2Fspip.php%3Fpage%3Dlogin
+                                 */
+                                    // https://fictions.laclasse.com/spip.php?page=login&url=%2Fecrire%2F&cicas=oui
                                     $lien = parametre_url($self, 'cicas', 'oui');
-                                    $return = '<a href="'.$lien.'"><img alt="'._T('cicas:eq_lien_auth_hybride').'" src="'.find_in_path('cicas.gif').'" /></a>'
+                                    //$lien = $_SERVER['REQUEST_URI'];
+                                    //$lien = $_SERVER['HTTP_HOST'];
+                                    $return = '<!-- '.$lien.' --><a href="'.$lien.'"><img alt="'._T('cicas:eq_lien_auth_hybride').'" src="'.find_in_path('cicas.gif').'" /></a>'
                                     .'&nbsp;<a href="'.$lien.'" style="'.$cistyle.'">&#91;'._T('cicas:eq_lien_auth_hybride').'&#93;</a>';
                             }
                             $flux['data']['texte'] = str_replace('</form>','</form>'.$return,$flux['data']['texte']);
@@ -108,6 +128,16 @@ function cicas_recuperer_fond($flux){
             }
 	}
     }
+    /*
+     * Url de connexion
+     * https://www.laclasse.com/sso/login?service=https%3A%2F%2Fbd.laclasse.com%2Fecrire%2F
+     * renvoi vers cette url avec ticket
+     * https://bd.laclasse.com/spip.php?page=login&url=%2Fecrire%2F%3Fticket%3DST-D4D2F3DD80A8DB08QnV9N4Jk53AcN
+     * requête d'autorisation avec cette url
+     * https://www.laclasse.com/sso/serviceValidate?service=https%3A%2F%2Fbd.laclasse.com%2Fecrire%2F&ticket=3DST-D4D2F3DD80A8DB08QnV9N4Jk53AcN
+     * réponse reçue en xml
+     * https://www.laclasse.com/sso/serviceValidate?service=https%3A%2F%2Fbd.laclasse.com%2Fecrire%2F&ticket=3DST-D4D2F3DD80A8DB08QnV9N4Jk53AcN
+     */
 	
     return $flux;
 }

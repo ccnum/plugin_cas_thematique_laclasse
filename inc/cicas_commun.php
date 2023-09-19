@@ -628,7 +628,7 @@ function cicas_lire_cicashostordre() {
             $tableau = $GLOBALS['ciconfig']['cicashostordre'];
         else
             // ordre de recherche par defaut (celui de phpCAS)
-            $tableau = array('HTTP_X_FORWARDED_SERVER','SERVER_NAME','HTTP_HOST');
+            $tableau = array('SERVER_NAME','HTTP_HOST','HTTP_X_FORWARDED_SERVER'); // MODIF : HTTP_X_FORWARDED_SERVER était en première position mais cela donnait l'url du proxy...
     }
 
     return $tableau;
