@@ -40,15 +40,13 @@
  * @sa @link internalLang Internationalization @endlink
  * @ingroup internalLang
  */
-class CAS_Languages_German implements CAS_Languages_LanguageInterface
-{
+class CAS_Languages_German implements CAS_Languages_LanguageInterface {
     /**
      * Get the using server string
      *
      * @return string using server
      */
-    public function getUsingServer()
-    {
+    public function getUsingServer() {
         return 'via Server';
     }
 
@@ -57,8 +55,7 @@ class CAS_Languages_German implements CAS_Languages_LanguageInterface
      *
      * @return string authentication wanted
      */
-    public function getAuthenticationWanted()
-    {
+    public function getAuthenticationWanted() {
         return 'CAS Authentifizierung erforderlich!';
     }
 
@@ -67,8 +64,7 @@ class CAS_Languages_German implements CAS_Languages_LanguageInterface
      *
      * @return string logout
      */
-    public function getLogout()
-    {
+    public function getLogout() {
         return 'CAS Abmeldung!';
     }
 
@@ -77,8 +73,7 @@ class CAS_Languages_German implements CAS_Languages_LanguageInterface
      *
      * @return string should habe been redirected
      */
-    public function getShouldHaveBeenRedirected()
-    {
+    public function getShouldHaveBeenRedirected() {
         return 'eigentlich h&auml;ten Sie zum CAS Server weitergeleitet werden sollen. Dr&uuml;cken Sie <a href="%s">hier</a> um fortzufahren.';
     }
 
@@ -87,8 +82,7 @@ class CAS_Languages_German implements CAS_Languages_LanguageInterface
      *
      * @return string authentication failed
      */
-    public function getAuthenticationFailed()
-    {
+    public function getAuthenticationFailed() {
         return 'CAS Anmeldung fehlgeschlagen!';
     }
 
@@ -97,8 +91,7 @@ class CAS_Languages_German implements CAS_Languages_LanguageInterface
      *
      * @return string not authenticated
      */
-    public function getYouWereNotAuthenticated()
-    {
+    public function getYouWereNotAuthenticated() {
         return '<p>Sie wurden nicht angemeldet.</p><p>Um es erneut zu versuchen klicken Sie <a href="%s">hier</a>.</p><p>Wenn das Problem bestehen bleibt, kontaktieren Sie den <a href="mailto:%s">Administrator</a> dieser Seite.</p>';
     }
 
@@ -107,10 +100,7 @@ class CAS_Languages_German implements CAS_Languages_LanguageInterface
      *
      * @return string service unavailable
      */
-    public function getServiceUnavailable()
-    {
+    public function getServiceUnavailable() {
         return 'Der Dienst `<b>%s</b>\' ist nicht verf&uuml;gbar (<b>%s</b>).';
     }
 }
-
-?>

@@ -39,8 +39,7 @@
  * @link     https://wiki.jasig.org/display/CASC/phpCAS
  */
 abstract class CAS_ProxiedService_Abstract
-implements CAS_ProxiedService, CAS_ProxiedService_Testable
-{
+implements CAS_ProxiedService, CAS_ProxiedService_Testable {
 
     /**
      * The proxy ticket that can be used when making service requests.
@@ -58,8 +57,7 @@ implements CAS_ProxiedService, CAS_ProxiedService_Testable
      * @throws CAS_OutOfSequenceException If called after a proxy ticket has
      *         already been initialized/set.
      */
-    public function setProxyTicket ($proxyTicket)
-    {
+    public function setProxyTicket($proxyTicket) {
         if (empty($proxyTicket)) {
             throw new CAS_InvalidArgumentException(
                 'Trying to initialize with an empty proxy ticket.'
@@ -80,8 +78,7 @@ implements CAS_ProxiedService, CAS_ProxiedService_Testable
      * @throws CAS_OutOfSequenceException If called before a proxy ticket has
      * already been initialized/set.
      */
-    protected function getProxyTicket ()
-    {
+    protected function getProxyTicket() {
         if (empty($this->_proxyTicket)) {
             throw new CAS_OutOfSequenceException(
                 'No proxy ticket yet. Call $this->initializeProxyTicket() to aquire the proxy ticket.'
@@ -109,8 +106,7 @@ implements CAS_ProxiedService, CAS_ProxiedService_Testable
      * @throws CAS_OutOfSequenceException If called after a proxy ticket has
      * already been initialized/set.
      */
-    public function setCasClient (CAS_Client $casClient)
-    {
+    public function setCasClient(CAS_Client $casClient) {
         if (!empty($this->_proxyTicket)) {
             throw new CAS_OutOfSequenceException(
                 'Already initialized, cannot change the CAS_Client.'
@@ -130,8 +126,7 @@ implements CAS_ProxiedService, CAS_ProxiedService_Testable
      * @throws CAS_OutOfSequenceException If called after a proxy ticket has
      * already been initialized.
      */
-    protected function initializeProxyTicket()
-    {
+    protected function initializeProxyTicket() {
         if (!empty($this->_proxyTicket)) {
             throw new CAS_OutOfSequenceException(
                 'Already initialized, cannot initialize again.'
@@ -144,6 +139,4 @@ implements CAS_ProxiedService, CAS_ProxiedService_Testable
             $this->_casClient->initializeProxiedService($this);
         }
     }
-
 }
-?>

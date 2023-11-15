@@ -41,8 +41,7 @@
  * @ingroup internalLang
  */
 
-interface CAS_Languages_LanguageInterface
-{
+interface CAS_Languages_LanguageInterface {
     /**
      * Get the using server string
      *
@@ -91,6 +90,4 @@ interface CAS_Languages_LanguageInterface
      * @return string service unavailable
      */
     public function getServiceUnavailable();
-
 }
-?>

@@ -40,15 +40,13 @@
  * @sa @link internalLang Internationalization @endlink
  * @ingroup internalLang
  */
-class CAS_Languages_Greek implements CAS_Languages_LanguageInterface
-{
+class CAS_Languages_Greek implements CAS_Languages_LanguageInterface {
     /**
      * Get the using server string
      *
      * @return string using server
      */
-    public function getUsingServer()
-    {
+    public function getUsingServer() {
         return 'χρησιμοποιείται ο εξυπηρετητής';
     }
 
@@ -57,8 +55,7 @@ class CAS_Languages_Greek implements CAS_Languages_LanguageInterface
      *
      * @return string authentication wanted
      */
-    public function getAuthenticationWanted()
-    {
+    public function getAuthenticationWanted() {
         return 'Απαιτείται η ταυτοποίηση CAS!';
     }
 
@@ -67,8 +64,7 @@ class CAS_Languages_Greek implements CAS_Languages_LanguageInterface
      *
      * @return string logout
      */
-    public function getLogout()
-    {
+    public function getLogout() {
         return 'Απαιτείται η αποσύνδεση από CAS!';
     }
 
@@ -77,8 +73,7 @@ class CAS_Languages_Greek implements CAS_Languages_LanguageInterface
      *
      * @return string should habe been redirected
      */
-    public function getShouldHaveBeenRedirected()
-    {
+    public function getShouldHaveBeenRedirected() {
         return 'Θα έπρεπε να είχατε ανακατευθυνθεί στον εξυπηρετητή CAS. Κάντε κλίκ <a href="%s">εδώ</a> για να συνεχίσετε.';
     }
 
@@ -87,8 +82,7 @@ class CAS_Languages_Greek implements CAS_Languages_LanguageInterface
      *
      * @return string authentication failed
      */
-    public function getAuthenticationFailed()
-    {
+    public function getAuthenticationFailed() {
         return 'Η ταυτοποίηση CAS απέτυχε!';
     }
 
@@ -97,8 +91,7 @@ class CAS_Languages_Greek implements CAS_Languages_LanguageInterface
      *
      * @return string not authenticated
      */
-    public function getYouWereNotAuthenticated()
-    {
+    public function getYouWereNotAuthenticated() {
         return '<p>Δεν ταυτοποιηθήκατε.</p><p>Μπορείτε να ξαναπροσπαθήσετε, κάνοντας κλίκ <a href="%s">εδώ</a>.</p><p>Εαν το πρόβλημα επιμείνει, ελάτε σε επαφή με τον <a href="mailto:%s">διαχειριστή</a>.</p>';
     }
 
@@ -107,9 +100,7 @@ class CAS_Languages_Greek implements CAS_Languages_LanguageInterface
      *
      * @return string service unavailable
      */
-    public function getServiceUnavailable()
-    {
+    public function getServiceUnavailable() {
         return 'Η υπηρεσία `<b>%s</b>\' δεν είναι διαθέσιμη (<b>%s</b>).';
     }
 }
-?>

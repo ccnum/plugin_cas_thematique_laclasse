@@ -47,8 +47,7 @@
 
 class CAS_AuthenticationException
 extends RuntimeException
-implements CAS_Exception
-{
+implements CAS_Exception {
 
     /**
      * This method is used to print the HTML output when the user was not
@@ -65,8 +64,15 @@ implements CAS_Exception
      * @param int        $err_code     the error code given by the CAS server
      * @param string     $err_msg      the error message given by the CAS server
      */
-    public function __construct($client,$failure,$cas_url,$no_response,
-        $bad_response=false,$cas_response='',$err_code=-1,$err_msg=''
+    public function __construct(
+        $client,
+        $failure,
+        $cas_url,
+        $no_response,
+        $bad_response = false,
+        $cas_response = '',
+        $err_code = -1,
+        $err_msg = ''
     ) {
         $messages = array();
         phpCAS::traceBegin();
@@ -75,37 +81,35 @@ implements CAS_Exception
         printf(
             $lang->getYouWereNotAuthenticated(),
             htmlentities($client->getURL()),
-            isset($_SERVER['SERVER_ADMIN']) ? $_SERVER['SERVER_ADMIN']:''
+            isset($_SERVER['SERVER_ADMIN']) ? $_SERVER['SERVER_ADMIN'] : ''
         );
-        phpCAS::trace($messages[] = 'CAS URL: '.$cas_url);
-        phpCAS::trace($messages[] = 'Authentication failure: '.$failure);
-        if ( $no_response ) {
+        phpCAS::trace($messages[] = 'CAS URL: ' . $cas_url);
+        phpCAS::trace($messages[] = 'Authentication failure: ' . $failure);
+        if ($no_response) {
             phpCAS::trace($messages[] = 'Reason: no response from the CAS server');
         } else {
-            if ( $bad_response ) {
+            if ($bad_response) {
                 phpCAS::trace($messages[] = 'Reason: bad response from the CAS server');
             } else {
                 switch ($client->getServerVersion()) {
-                case CAS_VERSION_1_0:
-                    phpCAS::trace($messages[] = 'Reason: CAS error');
-                    break;
-                case CAS_VERSION_2_0:
-                case CAS_VERSION_3_0:
-                    if ( $err_code === -1 ) {
-                        phpCAS::trace($messages[] = 'Reason: no CAS error');
-                    } else {
-                        phpCAS::trace($messages[] = 'Reason: ['.$err_code.'] CAS error: '.$err_msg);
-                    }
-                    break;
+                    case CAS_VERSION_1_0:
+                        phpCAS::trace($messages[] = 'Reason: CAS error');
+                        break;
+                    case CAS_VERSION_2_0:
+                    case CAS_VERSION_3_0:
+                        if ($err_code === -1) {
+                            phpCAS::trace($messages[] = 'Reason: no CAS error');
+                        } else {
+                            phpCAS::trace($messages[] = 'Reason: [' . $err_code . '] CAS error: ' . $err_msg);
+                        }
+                        break;
                 }
             }
-            phpCAS::trace($messages[] = 'CAS response: '.$cas_response);
+            phpCAS::trace($messages[] = 'CAS response: ' . $cas_response);
         }
         $client->printHTMLFooter();
         phpCAS::traceExit();
 
         parent::__construct(implode("\n", $messages));
     }
-
 }
-?>

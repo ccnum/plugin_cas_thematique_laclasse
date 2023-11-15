@@ -40,8 +40,7 @@
  */
 
 class CAS_ProxyChain
-implements CAS_ProxyChain_Interface
-{
+implements CAS_ProxyChain_Interface {
 
     protected $chain = array();
 
@@ -57,8 +56,7 @@ implements CAS_ProxyChain_Interface
      *
      * @param array $chain A chain of proxies
      */
-    public function __construct(array $chain)
-    {
+    public function __construct(array $chain) {
         // Ensure that we have an indexed array
         $this->chain = array_values($chain);
     }
@@ -70,8 +68,7 @@ implements CAS_ProxyChain_Interface
      *
      * @return bool
      */
-    public function matches(array $list)
-    {
+    public function matches(array $list) {
         $list = array_values($list);  // Ensure that we have an indexed array
         if ($this->isSizeValid($list)) {
             $mismatch = false;
@@ -120,8 +117,7 @@ implements CAS_ProxyChain_Interface
      *
      * @return bool
      */
-    protected function isSizeValid (array $list)
-    {
+    protected function isSizeValid(array $list) {
         return (sizeof($this->chain) == sizeof($list));
     }
 }

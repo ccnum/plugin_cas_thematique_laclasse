@@ -42,16 +42,14 @@
  */
 class CAS_OutOfSequenceBeforeProxyException
 extends CAS_OutOfSequenceException
-implements CAS_Exception
-{
+implements CAS_Exception {
 
     /**
      * Return standard error message
      *
      * @return void
      */
-    public function __construct ()
-    {
+    public function __construct() {
         parent::__construct(
             'this method cannot be called before phpCAS::proxy()'
         );

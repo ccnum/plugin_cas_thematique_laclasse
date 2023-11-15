@@ -38,15 +38,13 @@
  * @link     https://wiki.jasig.org/display/CASC/phpCAS
  *
  **/
-class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
-{
+class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface {
     /**
      * Get the using server string
      *
      * @return string using server
      */
-    public function getUsingServer()
-    {
+    public function getUsingServer() {
         return 'サーバーを使っています。';
     }
 
@@ -55,8 +53,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      *
      * @return string authentication wanted
      */
-    public function getAuthenticationWanted()
-    {
+    public function getAuthenticationWanted() {
         return 'CASによる認証を行います。';
     }
 
@@ -65,8 +62,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      *
      * @return string logout
      */
-    public function getLogout()
-    {
+    public function getLogout() {
         return 'CASからログアウトします!';
     }
 
@@ -75,8 +71,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      *
      * @return string should habe been redirected
      */
-    public function getShouldHaveBeenRedirected()
-    {
+    public function getShouldHaveBeenRedirected() {
         return 'CASサーバに行く必要があります。自動的に転送されない場合は <a href="%s">こちら</a> をクリックして続行します。';
     }
 
@@ -85,8 +80,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      *
      * @return string authentication failed
      */
-    public function getAuthenticationFailed()
-    {
+    public function getAuthenticationFailed() {
         return 'CASによる認証に失敗しました。';
     }
 
@@ -95,8 +89,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      *
      * @return string not authenticated
      */
-    public function getYouWereNotAuthenticated()
-    {
+    public function getYouWereNotAuthenticated() {
         return '<p>認証できませんでした。</p><p>もう一度リクエストを送信する場合は<a href="%s">こちら</a>をクリック。</p><p>問題が解決しない場合は <a href="mailto:%s">このサイトの管理者</a>に問い合わせてください。</p>';
     }
 
@@ -105,9 +98,7 @@ class CAS_Languages_Japanese implements CAS_Languages_LanguageInterface
      *
      * @return string service unavailable
      */
-    public function getServiceUnavailable()
-    {
+    public function getServiceUnavailable() {
         return 'サービス `<b>%s</b>\' は利用できません (<b>%s</b>)。';
     }
 }
-?>

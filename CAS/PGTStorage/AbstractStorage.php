@@ -43,8 +43,7 @@
  * @ingroup internalPGTStorage
  */
 
-abstract class CAS_PGTStorage_AbstractStorage
-{
+abstract class CAS_PGTStorage_AbstractStorage {
     /**
      * @addtogroup internalPGTStorage
      * @{
@@ -64,10 +63,9 @@ abstract class CAS_PGTStorage_AbstractStorage
      *
      * @protected
      */
-    function __construct($cas_parent)
-    {
+    function __construct($cas_parent) {
         phpCAS::traceBegin();
-        if ( !$cas_parent->isProxy() ) {
+        if (!$cas_parent->isProxy()) {
             phpCAS::error(
                 'defining PGT storage makes no sense when not using a CAS proxy'
             );
@@ -87,9 +85,8 @@ abstract class CAS_PGTStorage_AbstractStorage
      *
      * @public
      */
-    function getStorageType()
-    {
-        phpCAS::error(__CLASS__.'::'.__FUNCTION__.'() should never be called');
+    function getStorageType() {
+        phpCAS::error(__CLASS__ . '::' . __FUNCTION__ . '() should never be called');
     }
 
     /**
@@ -100,9 +97,8 @@ abstract class CAS_PGTStorage_AbstractStorage
      *
      * @public
      */
-    function getStorageInfo()
-    {
-        phpCAS::error(__CLASS__.'::'.__FUNCTION__.'() should never be called');
+    function getStorageInfo() {
+        phpCAS::error(__CLASS__ . '::' . __FUNCTION__ . '() should never be called');
     }
 
     // ########################################################################
@@ -116,7 +112,7 @@ abstract class CAS_PGTStorage_AbstractStorage
      * @hideinitializer
      * @deprecated not used.
      */
-    var $_error_message=false;
+    var $_error_message = false;
 
     /**
      * This method sets en error message, which can be read later by
@@ -128,8 +124,7 @@ abstract class CAS_PGTStorage_AbstractStorage
      *
      * @deprecated not used.
      */
-    function setErrorMessage($error_message)
-    {
+    function setErrorMessage($error_message) {
         $this->_error_message = $error_message;
     }
 
@@ -141,8 +136,7 @@ abstract class CAS_PGTStorage_AbstractStorage
      *
      * @deprecated not used.
      */
-    function getErrorMessage()
-    {
+    function getErrorMessage() {
         return $this->_error_message;
     }
 
@@ -165,8 +159,7 @@ abstract class CAS_PGTStorage_AbstractStorage
      *
      * @protected
      */
-    function isInitialized()
-    {
+    function isInitialized() {
         return $this->_initialized;
     }
 
@@ -175,8 +168,7 @@ abstract class CAS_PGTStorage_AbstractStorage
      *
      * @return void
      */
-    function init()
-    {
+    function init() {
         $this->_initialized = true;
     }
 
@@ -195,9 +187,8 @@ abstract class CAS_PGTStorage_AbstractStorage
      * @note Should never be called.
      *
      */
-    function write($pgt,$pgt_iou)
-    {
-        phpCAS::error(__CLASS__.'::'.__FUNCTION__.'() should never be called');
+    function write($pgt, $pgt_iou) {
+        phpCAS::error(__CLASS__ . '::' . __FUNCTION__ . '() should never be called');
     }
 
     /**
@@ -210,13 +201,9 @@ abstract class CAS_PGTStorage_AbstractStorage
      *
      * @note Should never be called.
      */
-    function read($pgt_iou)
-    {
-        phpCAS::error(__CLASS__.'::'.__FUNCTION__.'() should never be called');
+    function read($pgt_iou) {
+        phpCAS::error(__CLASS__ . '::' . __FUNCTION__ . '() should never be called');
     }
 
     /** @} */
-
 }
-
-?>

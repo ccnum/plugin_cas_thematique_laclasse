@@ -1505,9 +1505,9 @@ class phpCAS
      */
     public static function logoutWithUrl($url)
     {
-//----- Debut ajout CI (eviter un warning) -----        
+//----- Debut ajout CI (eviter un warning) -----
 //        trigger_error('Function deprecated for cas servers >= 3.3.5.1', E_USER_DEPRECATED);
-//----- Fin ajout CI -----        
+//----- Fin ajout CI -----
         phpCAS :: traceBegin();
         if (!is_object(self::$_PHPCAS_CLIENT)) {
             phpCAS :: error('this method should only be called after ' . __CLASS__ . '::client() or' . __CLASS__ . '::proxy()');
