@@ -36,5 +36,4 @@
 	</bouton>
 	
 	<necessite id="SPIP" version='[2.0.9;]' />
-
 </plugin>

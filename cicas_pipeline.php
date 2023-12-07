@@ -117,11 +117,12 @@ function cicas_recuperer_fond($flux){
                                  * exemple : https://www.laclasse.com/sso/login?service=bd.laclasse.com%2Fspip.php%3Fpage%3Dlogin
                                  */
                                     // https://fictions.laclasse.com/spip.php?page=login&url=%2Fecrire%2F&cicas=oui
-                                    $lien = parametre_url($self, 'cicas', 'oui');
-                                    //$lien = $_SERVER['REQUEST_URI'];
-                                    //$lien = $_SERVER['HTTP_HOST'];
-                                    $return = '<!-- '.$lien.' --><a href="'.$lien.'"><img alt="'._T('cicas:eq_lien_auth_hybride').'" src="'.find_in_path('cicas.gif').'" /></a>'
-                                    .'&nbsp;<a href="'.$lien.'" style="'.$cistyle.'">&#91;'._T('cicas:eq_lien_auth_hybride').'&#93;</a>';
+                                $url_voulue = 'https://www.laclasse.com/sso/login?service=https%3A%2F%2F'.$_SERVER['HTTP_HOST'].'%2Fspip.php%3Fpage%3Dlogin';
+                                    //$lien = parametre_url($self, 'cicas', 'oui');
+                                    //$request_uri = $_SERVER['REQUEST_URI'];
+                                    //$http_host = $_SERVER['HTTP_HOST'];
+                                    $return = '<!-- '.$url_voulue.' --><a href="'.$url_voulue.'"><img alt="'._T('cicas:eq_lien_auth_hybride').'" src="'.find_in_path('cicas.gif').'" /></a>'
+                                    .'&nbsp;<a href="'.$url_voulue.'" style="'.$cistyle.'">&#91;'._T('cicas:eq_lien_auth_hybride').'&#93;</a>';
                             }
                             $flux['data']['texte'] = str_replace('</form>','</form>'.$return,$flux['data']['texte']);
                     }
