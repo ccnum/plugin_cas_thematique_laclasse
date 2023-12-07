@@ -45,8 +45,7 @@
  * @link     https://wiki.jasig.org/display/CASC/phpCAS
  */
 class CAS_ProxyChain_Any
-implements CAS_ProxyChain_Interface
-{
+implements CAS_ProxyChain_Interface {
 
     /**
      * Match a list of proxies.
@@ -55,10 +54,8 @@ implements CAS_ProxyChain_Interface
      *
      * @return bool
      */
-    public function matches(array $list)
-    {
+    public function matches(array $list) {
         phpCAS::trace("Using CAS_ProxyChain_Any. No proxy validation is performed.");
         return true;
     }
-
 }

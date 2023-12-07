@@ -41,19 +41,19 @@ function action_logout_dist() {
 		$url = url_de_base();
 	}
 
-//------- Debut ajout CI -----
+	//------- Debut ajout CI -----
 	include_spip('inc/cicas_commun');
 
 	// Lire la configuration du plugin pour la session
-	$tableau_config = cicas_lire_meta(0,false,true);
-	
-	$ciauthcas= false;
-	if ($tableau_config['cicas']=="oui" OR isset($_COOKIE['cicas_sso'])) {
+	$tableau_config = cicas_lire_meta(0, false, true);
+
+	$ciauthcas = false;
+	if ($tableau_config['cicas'] == "oui" or isset($_COOKIE['cicas_sso'])) {
 		if ($tableau_config['cicasurldefaut'])
-			$ciauthcas= true;
+			$ciauthcas = true;
 	}
-//------- Fin ajout CI -----
-        
+	//------- Fin ajout CI -----
+
 	// seul le loge peut se deloger (mais id_auteur peut valoir 0 apres une restauration avortee)
 	if (
 		isset($GLOBALS['visiteur_session']['id_auteur'])
@@ -91,12 +91,12 @@ function action_logout_dist() {
 				'expires' => time() - 3600
 			]);
 		}
-                
-//------- Debut ajout CI -----
-//
+
+		//------- Debut ajout CI -----
+		//
 		// si authentification http, et que la personne est loge,
 		// pour se deconnecter, il faut proposer un nouveau formulaire de connexion http
-/*                
+		/*
 		if (
 			isset($_SERVER['PHP_AUTH_USER'])
 			and !$GLOBALS['ignore_auth_http']
@@ -111,60 +111,59 @@ function action_logout_dist() {
 				true
 			);
 		}
-*/                
+*/
 		if ($ciauthcas) {
-	
+
 			include_spip('inc/cicas_commun');
 			// import phpCAS lib
 			include_spip('CAS');
 
 			// Pour la solution hybride utilisation d'un cookie
-			if(isset($_COOKIE['cicas_sso']))
+			if (isset($_COOKIE['cicas_sso']))
 				spip_setcookie('cicas_sso', '', time() - 3600);
-                        
+
 			// Determiner l'origine de l'appel (intranet, internet, ...)
 			// .i2 ou .ader.gouv.fr ou .gouv.fr ou .agri
-			$ciurlcas=cicas_url_serveur_cas(0,false,true);	
-	
+			$ciurlcas = cicas_url_serveur_cas(0, false, true);
+
 			// initialize phpCAS
-			$cirep='';
-			$ciport=intval($tableau_config['cicasport']);
-			if (isset($tableau_config['cicasrepertoire'])) $cirep=$tableau_config['cicasrepertoire'];
-			
-			phpCAS::client(CAS_VERSION_2_0,$ciurlcas,$ciport,$cirep);
-			
+			$cirep = '';
+			$ciport = intval($tableau_config['cicasport']);
+			if (isset($tableau_config['cicasrepertoire'])) $cirep = $tableau_config['cicasrepertoire'];
+
+			phpCAS::client(CAS_VERSION_2_0, $ciurlcas, $ciport, $cirep);
+
 			phpCAS::setLang(cicas_lang_phpcas());
-	
+
 			// Determiner l'url retour
 			$ci_url_retour = cicas_url_retour($url);
-			
-			// deconnexion de CAS avec l'url retour	
+
+			// deconnexion de CAS avec l'url retour
 			phpCAS::logoutWithRedirectService($ci_url_retour);
-			
 		}
-//------- Fin ajout CI -----
+		//------- Fin ajout CI -----
 	}
 
-//------- Debut ajout CI -----
+	//------- Debut ajout CI -----
 	if (!$ciauthcas) {
-//------- Fin ajout CI -----	
-        
-	// Rediriger en contrant le cache navigateur (Safari3)
-	include_spip('inc/headers');
-//------- Debut ajout CI -----
-/*
+		//------- Fin ajout CI -----
+
+		// Rediriger en contrant le cache navigateur (Safari3)
+		include_spip('inc/headers');
+		//------- Debut ajout CI -----
+		/*
 	redirige_par_entete($url
 		? parametre_url($url, 'var_hasard', uniqid(random_int(0, mt_getrandmax())), '&')
 		: generer_url_public('login'));
 */
-	redirige_par_entete($url
-		? parametre_url($url, 'var_hasard', uniqid(rand()), '&')
-		: generer_url_public('login'));
-//------- Fin ajout CI -----			
+		redirige_par_entete($url
+			? parametre_url($url, 'var_hasard', uniqid(rand()), '&')
+			: generer_url_public('login'));
+		//------- Fin ajout CI -----
 
-//------- Debut ajout CI -----
+		//------- Debut ajout CI -----
 	}
-//------- Fin ajout CI -----			
+	//------- Fin ajout CI -----
 }
 
 /**

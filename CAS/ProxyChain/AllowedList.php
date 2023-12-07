@@ -40,8 +40,7 @@
  * @link     https://wiki.jasig.org/display/CASC/phpCAS
  */
 
-class CAS_ProxyChain_AllowedList
-{
+class CAS_ProxyChain_AllowedList {
 
     private $_chains = array();
 
@@ -50,8 +49,7 @@ class CAS_ProxyChain_AllowedList
      *
      * @return bool
      */
-    public function isProxyingAllowed()
-    {
+    public function isProxyingAllowed() {
         return (count($this->_chains) > 0);
     }
 
@@ -62,8 +60,7 @@ class CAS_ProxyChain_AllowedList
      *
      * @return void
      */
-    public function allowProxyChain(CAS_ProxyChain_Interface $chain)
-    {
+    public function allowProxyChain(CAS_ProxyChain_Interface $chain) {
         $this->_chains[] = $chain;
     }
 
@@ -74,8 +71,7 @@ class CAS_ProxyChain_AllowedList
      *
      * @return bool whether the proxies match the allowed proxies
      */
-    public function isProxyListAllowed(array $proxies)
-    {
+    public function isProxyListAllowed(array $proxies) {
         phpCAS::traceBegin();
         if (empty($proxies)) {
             phpCAS::trace("No proxies were found in the response");
@@ -100,12 +96,11 @@ class CAS_ProxyChain_AllowedList
      *
      * @return bool if any chain fully matches the supplied list
      */
-    public function contains(array $list)
-    {
+    public function contains(array $list) {
         phpCAS::traceBegin();
         $count = 0;
         foreach ($this->_chains as $chain) {
-            phpCAS::trace("Checking chain ". $count++);
+            phpCAS::trace("Checking chain " . $count++);
             if ($chain->matches($list)) {
                 phpCAS::traceEnd(true);
                 return true;
@@ -116,4 +111,3 @@ class CAS_ProxyChain_AllowedList
         return false;
     }
 }
-?>

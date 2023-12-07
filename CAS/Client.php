@@ -1008,7 +1008,7 @@ class CAS_Client
                 $this->_setCallbackModeUsingPost(false);
             }
 
-            
+
         }
 
         if ( $this->_isCallbackMode() ) {
@@ -3614,7 +3614,7 @@ class CAS_Client
     private function _getClientUrl()
     {
 //----- Debut ajout CI (ordre de recherche personnalise dans config/_config_cas.php) -----
-/*          
+/*
         if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
             // explode the host list separated by comma and use the first host
             $hosts = explode(',', $_SERVER['HTTP_X_FORWARDED_HOST']);
@@ -3632,7 +3632,7 @@ class CAS_Client
  */
         $server_url = cicas_url_host();
 //----- Fin ajout CI -----
-        
+
         if (!strpos($server_url, ':')) {
             if (empty($_SERVER['HTTP_X_FORWARDED_PORT'])) {
                 $server_port = $_SERVER['SERVER_PORT'];

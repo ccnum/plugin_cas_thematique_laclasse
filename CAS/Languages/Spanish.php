@@ -41,16 +41,14 @@
  * @sa @link internalLang Internationalization @endlink
  * @ingroup internalLang
  */
-class CAS_Languages_Spanish implements CAS_Languages_LanguageInterface
-{
+class CAS_Languages_Spanish implements CAS_Languages_LanguageInterface {
 
     /**
      * Get the using server string
      *
      * @return string using server
      */
-    public function getUsingServer()
-    {
+    public function getUsingServer() {
         return 'usando servidor';
     }
 
@@ -59,8 +57,7 @@ class CAS_Languages_Spanish implements CAS_Languages_LanguageInterface
      *
      * @return string authentication wanted
      */
-    public function getAuthenticationWanted()
-    {
+    public function getAuthenticationWanted() {
         return '¡Autentificación CAS necesaria!';
     }
 
@@ -69,8 +66,7 @@ class CAS_Languages_Spanish implements CAS_Languages_LanguageInterface
      *
      * @return string logout
      */
-    public function getLogout()
-    {
+    public function getLogout() {
         return '¡Salida CAS necesaria!';
     }
 
@@ -79,8 +75,7 @@ class CAS_Languages_Spanish implements CAS_Languages_LanguageInterface
      *
      * @return string should habe been redirected
      */
-    public function getShouldHaveBeenRedirected()
-    {
+    public function getShouldHaveBeenRedirected() {
         return 'Ya debería haber sido redireccionado al servidor CAS. Haga click <a href="%s">aquí</a> para continuar.';
     }
 
@@ -89,8 +84,7 @@ class CAS_Languages_Spanish implements CAS_Languages_LanguageInterface
      *
      * @return string authentication failed
      */
-    public function getAuthenticationFailed()
-    {
+    public function getAuthenticationFailed() {
         return '¡Autentificación CAS fallida!';
     }
 
@@ -99,8 +93,7 @@ class CAS_Languages_Spanish implements CAS_Languages_LanguageInterface
      *
      * @return string not authenticated
      */
-    public function getYouWereNotAuthenticated()
-    {
+    public function getYouWereNotAuthenticated() {
         return '<p>No estás autentificado.</p><p>Puedes volver a intentarlo haciendo click <a href="%s">aquí</a>.</p><p>Si el problema persiste debería contactar con el <a href="mailto:%s">administrador de este sitio</a>.</p>';
     }
 
@@ -109,9 +102,7 @@ class CAS_Languages_Spanish implements CAS_Languages_LanguageInterface
      *
      * @return string service unavailable
      */
-    public function getServiceUnavailable()
-    {
+    public function getServiceUnavailable() {
         return 'El servicio `<b>%s</b>\' no está disponible (<b>%s</b>).';
     }
 }
-?>

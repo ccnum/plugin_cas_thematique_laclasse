@@ -53,8 +53,7 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0  Apache License 2.0
  * @link     https://wiki.jasig.org/display/CASC/phpCAS
  */
-interface CAS_ProxiedService_Testable
-{
+interface CAS_ProxiedService_Testable {
 
     /**
      * Use a particular CAS_Client->initializeProxiedService() rather than the
@@ -69,7 +68,5 @@ interface CAS_ProxiedService_Testable
      * @throws CAS_OutOfSequenceException If called after a proxy ticket has
      *         already been initialized/set.
      */
-    public function setCasClient (CAS_Client $casClient);
-
+    public function setCasClient(CAS_Client $casClient);
 }
-?>

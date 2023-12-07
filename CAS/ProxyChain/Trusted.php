@@ -41,8 +41,7 @@
  */
 class CAS_ProxyChain_Trusted
 extends CAS_ProxyChain
-implements CAS_ProxyChain_Interface
-{
+implements CAS_ProxyChain_Interface {
 
     /**
      * Validate the size of the the list as compared to our chain.
@@ -51,9 +50,7 @@ implements CAS_ProxyChain_Interface
      *
      * @return bool
      */
-    protected function isSizeValid (array $list)
-    {
+    protected function isSizeValid(array $list) {
         return (sizeof($this->chain) <= sizeof($list));
     }
-
 }

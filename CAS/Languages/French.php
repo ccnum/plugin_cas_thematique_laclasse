@@ -40,15 +40,13 @@
  * @sa @link internalLang Internationalization @endlink
  * @ingroup internalLang
  */
-class CAS_Languages_French implements CAS_Languages_LanguageInterface
-{
+class CAS_Languages_French implements CAS_Languages_LanguageInterface {
     /**
      * Get the using server string
      *
      * @return string using server
      */
-    public function getUsingServer()
-    {
+    public function getUsingServer() {
         return 'utilisant le serveur';
     }
 
@@ -57,8 +55,7 @@ class CAS_Languages_French implements CAS_Languages_LanguageInterface
      *
      * @return string authentication wanted
      */
-    public function getAuthenticationWanted()
-    {
+    public function getAuthenticationWanted() {
         return 'Authentication CAS nécessaire&nbsp;!';
     }
 
@@ -67,8 +64,7 @@ class CAS_Languages_French implements CAS_Languages_LanguageInterface
      *
      * @return string logout
      */
-    public function getLogout()
-    {
+    public function getLogout() {
         return 'Déconnexion demandée&nbsp;!';
     }
 
@@ -77,8 +73,7 @@ class CAS_Languages_French implements CAS_Languages_LanguageInterface
      *
      * @return string should habe been redirected
      */
-    public function getShouldHaveBeenRedirected()
-    {
+    public function getShouldHaveBeenRedirected() {
         return 'Vous auriez du etre redirigé(e) vers le serveur CAS. Cliquez <a href="%s">ici</a> pour continuer.';
     }
 
@@ -87,8 +82,7 @@ class CAS_Languages_French implements CAS_Languages_LanguageInterface
      *
      * @return string authentication failed
      */
-    public function getAuthenticationFailed()
-    {
+    public function getAuthenticationFailed() {
         return 'Authentification CAS infructueuse&nbsp;!';
     }
 
@@ -97,8 +91,7 @@ class CAS_Languages_French implements CAS_Languages_LanguageInterface
      *
      * @return string not authenticated
      */
-    public function getYouWereNotAuthenticated()
-    {
+    public function getYouWereNotAuthenticated() {
         return '<p>Vous n\'avez pas été authentifié(e).</p><p>Vous pouvez soumettre votre requete à nouveau en cliquant <a href="%s">ici</a>.</p><p>Si le problème persiste, vous pouvez contacter <a href="mailto:%s">l\'administrateur de ce site</a>.</p>';
     }
 
@@ -107,10 +100,7 @@ class CAS_Languages_French implements CAS_Languages_LanguageInterface
      *
      * @return string service unavailable
      */
-    public function getServiceUnavailable()
-    {
+    public function getServiceUnavailable() {
         return 'Le service `<b>%s</b>\' est indisponible (<b>%s</b>)';
     }
 }
-
-?>

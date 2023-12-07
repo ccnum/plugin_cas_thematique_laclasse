@@ -39,8 +39,7 @@
  */
 class CAS_Request_CurlRequest
 extends CAS_Request_AbstractRequest
-implements CAS_Request_RequestInterface
-{
+implements CAS_Request_RequestInterface {
 
     /**
      * Set additional curl options
@@ -49,8 +48,7 @@ implements CAS_Request_RequestInterface
      *
      * @return void
      */
-    public function setCurlOptions (array $options)
-    {
+    public function setCurlOptions(array $options) {
         $this->_curlOptions = $options;
     }
     private $_curlOptions = array();
@@ -60,30 +58,28 @@ implements CAS_Request_RequestInterface
      *
      * @return bool true on success, false on failure.
      */
-    protected function sendRequest ()
-    {
+    protected function sendRequest() {
         phpCAS::traceBegin();
 
         /*********************************************************
          * initialize the CURL session
-        *********************************************************/
+         *********************************************************/
         $ch = $this->initAndConfigure();
 
         /*********************************************************
          * Perform the query
-        *********************************************************/
+         *********************************************************/
         $buf = curl_exec($ch);
-        if ( $buf === false ) {
+        if ($buf === false) {
             phpCAS::trace('curl_exec() failed');
             $this->storeErrorMessage(
-                'CURL error #'.curl_errno($ch).': '.curl_error($ch)
+                'CURL error #' . curl_errno($ch) . ': ' . curl_error($ch)
             );
             $res = false;
         } else {
             $this->storeResponseBody($buf);
-            phpCAS::trace("Response Body: \n".$buf."\n");
+            phpCAS::trace("Response Body: \n" . $buf . "\n");
             $res = true;
-
         }
         // close the CURL session
         curl_close($ch);
@@ -99,11 +95,10 @@ implements CAS_Request_RequestInterface
      *
      * @return resource|false The cURL handle on success, false on failure
      */
-    public function initAndConfigure()
-    {
+    public function initAndConfigure() {
         /*********************************************************
          * initialize the CURL session
-        *********************************************************/
+         *********************************************************/
         $ch = curl_init($this->url);
 
         if (version_compare(PHP_VERSION, '5.1.3', '>=')) {
@@ -117,7 +112,7 @@ implements CAS_Request_RequestInterface
 
         /*********************************************************
          * Set SSL configuration
-        *********************************************************/
+         *********************************************************/
         if ($this->caCertPath) {
             if ($this->validateCN) {
                 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
@@ -134,7 +129,7 @@ implements CAS_Request_RequestInterface
 
         /*********************************************************
          * Configure curl to capture our output.
-        *********************************************************/
+         *********************************************************/
         // return the CURL output into a variable
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
@@ -143,25 +138,25 @@ implements CAS_Request_RequestInterface
 
         /*********************************************************
          * Add cookie headers to our request.
-        *********************************************************/
+         *********************************************************/
         if (count($this->cookies)) {
             $cookieStrings = array();
             foreach ($this->cookies as $name => $val) {
-                $cookieStrings[] = $name.'='.$val;
+                $cookieStrings[] = $name . '=' . $val;
             }
             curl_setopt($ch, CURLOPT_COOKIE, implode(';', $cookieStrings));
         }
 
         /*********************************************************
          * Add any additional headers
-        *********************************************************/
+         *********************************************************/
         if (count($this->headers)) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         }
 
         /*********************************************************
          * Flag and Body for POST requests
-        *********************************************************/
+         *********************************************************/
         if ($this->isPost) {
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $this->postBody);
@@ -179,8 +174,7 @@ implements CAS_Request_RequestInterface
      *
      * @return void
      */
-    private function _storeResponseBody ($body)
-    {
+    private function _storeResponseBody($body) {
         $this->storeResponseBody($body);
     }
 
@@ -192,8 +186,7 @@ implements CAS_Request_RequestInterface
      *
      * @return int
      */
-    private function _curlReadHeaders ($ch, $header)
-    {
+    private function _curlReadHeaders($ch, $header) {
         $this->storeResponseHeader($header);
         return strlen($header);
     }

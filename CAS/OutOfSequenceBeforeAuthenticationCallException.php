@@ -42,15 +42,13 @@
  */
 class CAS_OutOfSequenceBeforeAuthenticationCallException
 extends CAS_OutOfSequenceException
-implements CAS_Exception
-{
-    /**
-     * Return standard error meessage
-     *
-     * @return void
-     */
-    public function __construct ()
-    {
-        parent::__construct('An authentication call hasn\'t happened yet.');
-    }
+implements CAS_Exception {
+	/**
+	 * Return standard error meessage
+	 *
+	 * @return void
+	 */
+	public function __construct() {
+		parent::__construct('An authentication call hasn\'t happened yet.');
+	}
 }

@@ -40,8 +40,7 @@
  */
 class CAS_ProxyTicketException
 extends BadMethodCallException
-implements CAS_Exception
-{
+implements CAS_Exception {
 
     /**
      * Constructor
@@ -51,18 +50,17 @@ implements CAS_Exception
      *
      * @return void
      */
-    public function __construct ($message, $code = PHPCAS_SERVICE_PT_FAILURE)
-    {
+    public function __construct($message, $code = PHPCAS_SERVICE_PT_FAILURE) {
         // Warn if the code is not in our allowed list
         $ptCodes = array(
-        PHPCAS_SERVICE_PT_FAILURE,
-        PHPCAS_SERVICE_PT_NO_SERVER_RESPONSE,
-        PHPCAS_SERVICE_PT_BAD_SERVER_RESPONSE,
+            PHPCAS_SERVICE_PT_FAILURE,
+            PHPCAS_SERVICE_PT_NO_SERVER_RESPONSE,
+            PHPCAS_SERVICE_PT_BAD_SERVER_RESPONSE,
         );
         if (!in_array($code, $ptCodes)) {
             trigger_error(
-                'Invalid code '.$code
-                .' passed. Must be one of PHPCAS_SERVICE_PT_FAILURE, PHPCAS_SERVICE_PT_NO_SERVER_RESPONSE, or PHPCAS_SERVICE_PT_BAD_SERVER_RESPONSE.'
+                'Invalid code ' . $code
+                    . ' passed. Must be one of PHPCAS_SERVICE_PT_FAILURE, PHPCAS_SERVICE_PT_NO_SERVER_RESPONSE, or PHPCAS_SERVICE_PT_BAD_SERVER_RESPONSE.'
             );
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin CICAS
  * Copyright (c) Christophe IMBERTI
@@ -11,9 +12,9 @@ include_spip('inc/filtres');
 include_spip('inc/cicas_commun');
 
 
-function action_supprimer_serveur_cas($id_serveur=null){
+function action_supprimer_serveur_cas($id_serveur = null) {
 
-	if (is_null($id_serveur)){
+	if (is_null($id_serveur)) {
 		$securiser_action = charger_fonction('securiser_action', 'inc');
 		$id_serveur = $securiser_action();
 	}
@@ -22,5 +23,3 @@ function action_supprimer_serveur_cas($id_serveur=null){
 		cicas_supprimer_serveur_additionnel(intval($id_serveur));
 	}
 }
-
-?>

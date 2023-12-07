@@ -43,7 +43,5 @@
  */
 class CAS_OutOfSequenceException
 extends BadMethodCallException
-implements CAS_Exception
-{
-
+implements CAS_Exception {
 }
